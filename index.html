@@ -68,6 +68,7 @@ padding:10px;
 td{
 padding:8px;
 border-bottom:1px solid #1c2c2c;
+word-break:break-all;
 }
 
 tr:hover{
@@ -82,6 +83,116 @@ font-weight:600;
 .err{
 color:#ff5c5c;
 font-weight:600;
+}
+
+.info{
+color:#00c3ff;
+font-weight:600;
+}
+
+.samples{
+margin:15px 0 10px;
+}
+
+.samples label{
+color:#9fffd8;
+margin-right:10px;
+}
+
+select{
+font-family:"JetBrains Mono",monospace;
+background:#0b0f14;
+color:#8affc1;
+border:1px solid #1e3a3a;
+border-radius:8px;
+padding:8px 10px;
+outline:none;
+max-width:100%;
+}
+
+select:focus{
+box-shadow:0 0 10px rgba(0,255,170,0.5);
+}
+
+optgroup{
+color:#00c3ff;
+background:#0b0f14;
+}
+
+option{
+color:#8affc1;
+background:#0b0f14;
+}
+
+.tabs{
+margin:20px 0 5px;
+text-align:center;
+}
+
+button.tab{
+margin:0 5px;
+background:#0b0f14;
+color:#8affc1;
+border:1px solid #1e3a3a;
+}
+
+button.tab.active{
+background:linear-gradient(135deg,#00ffa6,#00c3ff);
+color:#002;
+}
+
+.form{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:12px;
+margin:15px 0;
+}
+
+.field{
+display:flex;
+flex-direction:column;
+}
+
+.field label{
+color:#9fffd8;
+font-size:12px;
+margin-bottom:6px;
+}
+
+.field input,.field select{
+font-family:"JetBrains Mono",monospace;
+background:#0b0f14;
+color:#8affc1;
+border:1px solid #1e3a3a;
+border-radius:8px;
+padding:8px 10px;
+outline:none;
+}
+
+.field input:focus,.field select:focus{
+box-shadow:0 0 10px rgba(0,255,170,0.5);
+}
+
+.outlabel{
+color:#9fffd8;
+margin-top:20px;
+margin-bottom:8px;
+}
+
+.hexout{
+background:#0b0f14;
+border:1px solid #1e3a3a;
+border-radius:10px;
+padding:14px;
+color:#00ffa6;
+word-break:break-all;
+min-height:20px;
+}
+
+.muted{
+margin-top:8px;
+color:#6fffd2;
+font-size:12px;
 }
 
 footer{
@@ -141,6 +252,58 @@ transition:all .2s ease;
 
 <h2>ICODE Universal Decoder</h2>
 
+<div class="tabs">
+<button id="btn-decode" class="tab active" onclick="showTab('decode')">Decode Frame</button>
+<button id="btn-build" class="tab" onclick="showTab('build')">Build Frame</button>
+</div>
+
+<div id="tab-decode">
+
+<div class="samples">
+<label for="sample">Contoh payload dari dokumen:</label>
+<select id="sample" onchange="loadSample()">
+<option value="">-- pilih frame --</option>
+<optgroup label="Query / Report">
+<option value="250900000001FF2E8B">2.1 Query Energy Data (0x25)</option>
+<option value="261A000000010000A8C0000500003039000004E200004D9EE623">2.1 Energy Data Response (0x26)</option>
+<option value="320900000001FF498A">2.3 Query Clock (0x32)</option>
+<option value="4A0E000000011E2D0A0C081AB365">2.3 Clock Response (0x4A)</option>
+</optgroup>
+<optgroup label="Control">
+<option value="150A00000001050079A8">3.1 Light ON (0x15)</option>
+<option value="150A000000010501B868">3.1 Light OFF (0x15)</option>
+<option value="150A000000010432F9ED">3.1 Dimming 50% (0x15)</option>
+<option value="115A0000000104103205040000200C562203520751007D138A0000303934D01E2D0A0C081AFFFFFFABFFFFFFBA0000000C0001E2400003944700BC614E000000000000000F000006720000007BFFFFFFF50000A8C000057B6620">3.1 Response full status (0x11) + Photo ADC</option>
+<option value="11590000000104103205040000200C562203520751007D138A0000303934D01E2D0A0C081AFFFFFFABFFFFFFBA0000000C0001E2400003944700BC614E000000000000000F000006720000007BFFFFFFF50000A8C000050D56">3.1 Response full status (0x11) legacy, tanpa Photo ADC</option>
+</optgroup>
+<optgroup label="Parameter">
+<option value="370800000001245D">4.4 Reset Accumulative Energy (0x37)</option>
+<option value="360800000001258C">4.5 Reset Working / Restart Times (0x36)</option>
+<option value="8808000000013E92">Generic Acknowledge (0x88)</option>
+<option value="700900000001072A0C">4.7 Time zone Setting UTC+7 (0x70)</option>
+<option value="51005968747470733A2F2F736D617274706A752E69636F64652E69642F2F6669726D776172652F4C43555F4341545F315F4669726D776172655F313130382E312E315F4C7561744F532D536F435F45433631382E62696E1224">4.6 FOTA URL (0x51)</option>
+<option value="52000600133C">4.6 FOTA Status Success (0x52)</option>
+<option value="5200060292FD">4.6 FOTA Status MD5 Error (0x52)</option>
+<option value="A1000F00000001B0DF83A4177C488A">4.7 Modify IP 176.223.131.164:6012 (0xA1)</option>
+<option value="A3001C00000001736D617274706A752E69636F64652E6964177C3321">4.8 Modify URL + port (0xA3)</option>
+<option value="A5001100000001696E7465726E65744AAF">4.9 Modify APN (0xA5)</option>
+</optgroup>
+<optgroup label="AA55">
+<option value="AA55002A03000300C2A400000001D00708678560512345670805108901234567890318057B0901010807">5.1 Registration Packet (0xD0)</option>
+<option value="AA55001F030003000FEB00000001D007086785605123456703180901010807">5.2 Heartbeat Packet (0xD0)</option>
+<option value="AA55000601000300CD2B00000001D301">2.2 Query Time Strategy (0xD3)</option>
+<option value="AA550011010003009A9500000001D3010012001E0432061E000501">2.2 Query Time Strategy Response (0xD3)</option>
+<option value="AA5500110100030007AC00000001D4020012000005000600000501">4.1 Strategy Settings (0xD4)</option>
+<option value="AA550007010003002F1B00000001D44F6B">4.1 Strategy Settings Response (0xD4)</option>
+<option value="AA55000801000300453200000001D200013C">4.2 Mode Settings light sensor (0xD2)</option>
+<option value="AA55000701000300CF1A00000001D24F6B">4.2 Mode Settings Response (0xD2)</option>
+<option value="AA55000B0100030092F80000000115012C0708FFFF">4.3 Uplink Interval 300s / 1800s (0x15)</option>
+<option value="AA550009010003004F2C0000000113021CFFFF">5.3 Heartbeat Interval 540s (0x13)</option>
+<option value="AA550007010003009EE600000001134F6B">5.3 Heartbeat Interval Response (0x13)</option>
+</optgroup>
+</select>
+</div>
+
 <textarea id="hexInput"></textarea>
 
 <br>
@@ -157,7 +320,29 @@ transition:all .2s ease;
 
 </table>
 
-<footer>HEX TO DECIMAL</footer>
+</div>
+
+<div id="tab-build" style="display:none">
+
+<div class="samples">
+<label for="cmd">Perintah:</label>
+<select id="cmd" onchange="renderForm()"></select>
+</div>
+
+<div id="form" class="form"></div>
+
+<div class="outlabel">Frame siap kirim</div>
+
+<div id="built" class="hexout"></div>
+
+<div id="builtInfo" class="muted"></div>
+
+<button id="copyBtn" onclick="copyBuilt()">Copy</button>
+<button onclick="decodeBuilt()">Decode frame ini</button>
+
+</div>
+
+<footer>Protocol of 4G CAT1 Single Lamp Controller &mdash; ICODE/4G_CAT1_LCU/II/24/1.4</footer>
 
 <script>
 
@@ -175,6 +360,16 @@ let v=parseInt(hex,16);
 
 if(v>0x7FFFFFFF)
 v-=0x100000000;
+
+return v;
+}
+
+function hexToSigned16(hex){
+
+let v=parseInt(hex,16);
+
+if(v>0x7FFF)
+v-=0x10000;
 
 return v;
 }
@@ -231,6 +426,24 @@ return out;
 
 }
 
+/* ASCII */
+
+function asciiDecode(bytes){
+
+let out="";
+
+for(let b of bytes){
+
+let v=parseInt(b,16);
+
+out+=(v>=32&&v<=126)?String.fromCharCode(v):".";
+
+}
+
+return out;
+
+}
+
 /* TIME */
 
 function formatTimeUTC7(hex){
@@ -263,6 +476,34 @@ return `${dd.toString().padStart(2,'0')}/${mm.toString().padStart(2,'0')}/20${yy
 
 }
 
+/* Execution time = Hour / Minute / Second, decimal value per byte */
+
+function formatExecTime(hex){
+
+let hh=parseInt(hex.slice(0,2),16);
+let mm=parseInt(hex.slice(2,4),16);
+let ss=parseInt(hex.slice(4,6),16);
+
+return `${hh.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}:${ss.toString().padStart(2,'0')}`;
+
+}
+
+/* Execution function : 0500 On / 0501 Off / 04XX dimming */
+
+function formatExecFunction(hex){
+
+let h=hex.toLowerCase();
+
+if(h==="0500")return "Light On";
+if(h==="0501")return "Light Off";
+
+if(h.slice(0,2)==="04")
+return "Dimming "+parseInt(h.slice(2,4),16)+" %";
+
+return "Unknown";
+
+}
+
 /* TABLE */
 
 function clearTable(){
@@ -284,12 +525,60 @@ let r=document.getElementById("result").insertRow();
 r.style.animation="fadeIn .25s ease";
 
 r.insertCell(0).innerText=name;
-r.insertCell(1).innerText="0x"+hex;
+r.insertCell(1).innerText=hex===""?"":"0x"+hex;
 
 let v=r.insertCell(2);
 v.innerText=val;
 
 if(cls)v.className=cls;
+
+}
+
+function frameType(name){
+row("Frame Type","",name,"info");
+}
+
+/* CRC located at the end of the frame */
+
+function crcTail(bytes){
+
+if(bytes.length<3){
+row("CRC16","","Frame too short","err");
+return;
+}
+
+let crcFrame=bytes.slice(bytes.length-2).join("").toLowerCase();
+
+let crcCalc=calcCRC16(bytes.slice(0,bytes.length-2));
+
+let status=(crcFrame===crcCalc)?"OK":"ERROR";
+
+row("CRC16",
+crcFrame,
+"Calc 0x"+crcCalc+" = "+status,
+status==="OK"?"ok":"err");
+
+}
+
+/* total frame length check (1 byte length field) */
+
+function lengthCheck(declared,actual){
+
+let status=(declared===actual);
+
+row("Length Check",
+"",
+actual+" bytes "+(status?"= Frame size OK":"!= declared "+declared),
+status?"ok":"err");
+
+}
+
+function addressRow(bytes,label="Address"){
+
+let hex=bytes.join("");
+
+row(label,hex,hexToInt(hex)+
+(hex.toLowerCase()==="ffffffff"?" (broadcast / all controllers)":""));
 
 }
 
@@ -305,11 +594,13 @@ document.getElementById("result").style.opacity="1";
 
 let hexRaw=document
 .getElementById("hexInput")
-.value.replace(/\s/g,'');
+.value.replace(/0x/gi,'')
+.replace(/[^0-9a-fA-F]/g,'')
+.toLowerCase();
 
 let bytes=hexRaw.match(/.{1,2}/g);
 
-if(!bytes){
+if(!bytes||hexRaw.length%2!==0){
 alert("Invalid HEX");
 return;
 }
@@ -318,76 +609,89 @@ clearTable();
 
 /* AUTO DETECT FRAME */
 
-if(bytes[0]=="aa" && bytes[1]=="55"){
+if(bytes[0]==="aa"&&bytes[1]==="55"){
 decodeAA55(bytes);
 return;
 }
 
-if(bytes[0]=="26"){
-decode26(bytes);
-return;
+switch(bytes[0]){
+
+case "25": decode25(bytes); return;
+case "26": decode26(bytes); return;
+case "32": decode32(bytes); return;
+case "4a": decode4A(bytes); return;
+case "15": decode15(bytes); return;
+case "11": decodeICODE(bytes); return;
+case "88": decode88(bytes); return;
+case "36": decodeReset(bytes,"4.5 Reset Accumulative Device Working / Restart Times"); return;
+case "37": decodeReset(bytes,"4.4 Reset Accumulative Energy"); return;
+case "51": decode51(bytes); return;
+case "52": decode52(bytes); return;
+case "70": decode70(bytes); return;
+case "a1": decodeA1(bytes); return;
+case "a3": decodeA3(bytes); return;
+case "a5": decodeA5(bytes); return;
+
 }
+
+/* fallback : assume 0x11 status frame */
 
 decodeICODE(bytes);
 
 }
 
-/* AA55 FRAME */
+/* ============================================================
+   0xAA55 FRAMES
+   Length = bytes after CRC16
+   CRC is calculated over the data segment following the CRC field
+   ============================================================ */
 
 function decodeAA55(b){
 
-row("Frame Head",b[0]+b[1],"AA55");
+row("Frame Head",b[0]+b[1],"AA55 - Data frame start");
 
-row("Length",
-b[2]+b[3],
-hexToInt(b[2]+b[3])+" bytes");
+let hdr=b.slice(4,8).join("");
 
-// let frameLen = hexToInt(b[2]+b[3]);
+/* registration / heartbeat count the whole frame,
+   command frames count the bytes after CRC16 */
 
-// if(b.length !== frameLen){
-// row(
-// "Length Check",
-// b.length,
-// "Frame size mismatch",
-// "err"
-// );
-// }else{
-// row(
-// "Length Check",
-// b.length,
-// "Frame size OK",
-// "ok"
-// );
-// }
+let isCommand=(hdr==="01000300");
 
-let frameLen = hexToInt(b[2]+b[3]);
+let declared=hexToInt(b[2]+b[3]);
 
-let payloadLength = b.length - 10;
+row("Length",b[2]+b[3],
+declared+(isCommand?" bytes after CRC16":" bytes (total frame length)"));
 
-if(payloadLength !== frameLen){
+let actual=isCommand?b.length-10:b.length;
 
-row(
-"Length Check",
-payloadLength,
-"Frame size mismatch",
-"err"
-);
+if(actual!==declared){
+
+row("Length Check",
+"",
+actual+" bytes != declared "+declared,
+"err");
 
 }else{
 
-row(
-"Length Check",
-payloadLength,
-"Frame size OK",
-"ok"
-);
+row("Length Check",
+"",
+actual+" bytes = Frame size OK",
+"ok");
 
 }
 
-row("Version",b[4],b[4]);
-row("Encrypt",b[5],b[5]);
+if(isCommand){
+
+row("Reserved port",hdr,"Fixed");
+
+}else{
+
+row("Version",b[4],hexToInt(b[4]));
+row("Enctype",b[5],b[5]);
 row("Type",b[6],b[6]);
 row("Reserved",b[7],b[7]);
+
+}
 
 let crcFrame=(b[8]+b[9]).toLowerCase();
 
@@ -395,78 +699,445 @@ let crcCalc=calcCRC16(b.slice(10));
 
 let status=(crcFrame===crcCalc)?"OK":"ERROR";
 
-row(
-"CRC16",
+row("CRC16",
 crcFrame,
 "Calc 0x"+crcCalc+" = "+status,
-status==="OK"?"ok":"err"
-);
+status==="OK"?"ok":"err");
 
-row("Address",
-b.slice(10,14).join(""),
-hexToInt(b.slice(10,14).join("")));
+addressRow(b.slice(10,14));
 
-row("Function Code",b[14],"0xD0");
+if(b.length<15){
+row("Function Code","","Missing","err");
+return;
+}
 
-row("Serial",b[15],b[15]);
+let fc=b[14];
+let p=b.slice(15);
 
-row("IMEI",
-b.slice(16,24).join(""),
-bcdDecode(b.slice(16,24)));
+switch(fc){
 
-row("Serial",b[24],"08");
-
-row("IMSI",
-b.slice(25,33).join(""),
-bcdDecode(b.slice(25,33)));
-
-row("Serial",b[33],"03");
-
-row("CSQ",b[34],hexToInt(b[34]));
-
-row("Serial",b[35],"05");
-
-row("PCI",b[36],hexToInt(b[36]));
-
-row("Serial",b[37],"09");
-
-row("FW Version",
-b[38]+b[39]+b[40],
-hexToInt(b[38])+"."+hexToInt(b[39])+"."+hexToInt(b[40]));
-
-row("Timezone",b[41],"UTC+"+hexToInt(b[41]));
+case "d0": aa55D0(fc,p); return;
+case "d2": aa55D2(fc,p); return;
+case "d3": aa55D3(fc,p); return;
+case "d4": aa55D4(fc,p); return;
+case "13": aa55Heartbeat(fc,p); return;
+case "15": aa55Uplink(fc,p); return;
 
 }
 
-/* ICODE FRAME */
+row("Function Code",fc,"Unknown","err");
+
+if(p.length)
+row("Payload",p.join(""),p.length+" bytes");
+
+}
+
+/* walk the serial-no. tags to see whether an IMSI block is present */
+
+function hasIMSI(p){
+
+let i=0;
+
+while(i<p.length){
+
+if(p.length-i===1)return false;
+
+let t=p[i];
+
+if(t==="08")return true;
+
+if(t==="07")i+=9;
+else if(t==="03"||t==="05")i+=2;
+else if(t==="09")i+=4;
+else i++;
+
+}
+
+return false;
+
+}
+
+/* 5.1 / 5.2 Registration & Heartbeat packet (0xD0) */
+
+function aa55D0(fc,p){
+
+/* registration carries IMSI (serial no. 0x08), heartbeat does not.
+   the tag must be walked, an IMEI/IMSI digit byte can also be 0x08 */
+
+frameType(hasIMSI(p)
+?"5.1 Registration Packet (0xAA55 / 0xD0)"
+:"5.2 Heartbeat Packet (0xAA55 / 0xD0)");
+
+row("Function Code",fc,"0xD0 - Fixed");
+
+let i=0;
+
+while(i<p.length){
+
+/* last remaining byte is the time zone */
+
+if(p.length-i===1){
+
+row("Time zone",p[i],"UTC+"+hexToInt(p[i]));
+i++;
+continue;
+
+}
+
+let tag=p[i];
+
+if(tag==="07"&&p.length-i>=9){
+
+row("Serial No.",tag,"0x07 - IMEI");
+row("IMEI",p.slice(i+1,i+9).join(""),bcdDecode(p.slice(i+1,i+9)));
+i+=9;
+
+}else if(tag==="08"&&p.length-i>=9){
+
+row("Serial No.",tag,"0x08 - IMSI");
+row("IMSI",p.slice(i+1,i+9).join(""),bcdDecode(p.slice(i+1,i+9)));
+i+=9;
+
+}else if(tag==="03"&&p.length-i>=2){
+
+row("Serial No.",tag,"0x03 - CSQ");
+row("CSQ",p[i+1],hexToInt(p[i+1]));
+i+=2;
+
+}else if(tag==="05"&&p.length-i>=2){
+
+row("Serial No.",tag,"0x05 - PCI");
+row("PCI",p[i+1],hexToInt(p[i+1]));
+i+=2;
+
+}else if(tag==="09"&&p.length-i>=4){
+
+row("Serial No.",tag,"0x09 - FW Version");
+
+row("FW Version",
+p.slice(i+1,i+4).join(""),
+hexToInt(p[i+1])+"."+hexToInt(p[i+2])+"."+hexToInt(p[i+3]));
+
+i+=4;
+
+}else{
+
+row("Unknown Serial No.",tag,"Unrecognized field","err");
+i++;
+
+}
+
+}
+
+}
+
+/* 4.2 Light controller Mode settings (0xD2) */
+
+function aa55D2(fc,p){
+
+if(isAck(p)){
+
+frameType("4.2 Light controller Mode settings - Response (0xD2)");
+row("Function Code",fc,"0xD2 - Fixed");
+ackRow(p);
+return;
+
+}
+
+frameType("4.2 Light controller Mode settings (0xD2)");
+
+row("Function Code",fc,"0xD2 - Fixed");
+
+row("Enable Byte",p[0],p[0]==="00"?"Enable Mode":"Disable Mode");
+
+row("Mode",p[1],
+p[1]==="00"?"Schedule based control":
+p[1]==="01"?"Light sensor based control":"Unknown");
+
+row("Light Sensor Query Interval",p[2],hexToInt(p[2]));
+
+}
+
+/* 2.2 Query Time Strategy (0xD3) */
+
+function aa55D3(fc,p){
+
+if(p.length<=1){
+
+frameType("2.2 Query Time Strategy (0xAA55 / 0xD3)");
+row("Function Code",fc,"0xD3 - Fixed");
+row("Strategy No.",p[0],hexToInt(p[0]));
+return;
+
+}
+
+frameType("2.2 Query Time Strategy - Response (0xD3)");
+
+row("Function Code",fc,"0xD3 - Fixed");
+
+strategyBody(p);
+
+}
+
+/* 4.1 Single light controller strategy settings (0xD4) */
+
+function aa55D4(fc,p){
+
+if(isAck(p)){
+
+frameType("4.1 Strategy Settings - Response (0xD4)");
+row("Function Code",fc,"0xD4 - Fixed");
+ackRow(p);
+return;
+
+}
+
+frameType("4.1 Single light controller strategy settings (0xD4)");
+
+row("Function Code",fc,"0xD4 - Fixed");
+
+strategyBody(p);
+
+}
+
+function strategyBody(p){
+
+row("Strategy No.",p[0],hexToInt(p[0]));
+
+row("Enable Byte",p[1],p[1]==="00"?"Enable":"Disable");
+
+let t1=p.slice(2,5).join("");
+row("Execution time 1",t1,formatExecTime(t1));
+
+let f1=p.slice(5,7).join("");
+row("Execution function 1",f1,formatExecFunction(f1));
+
+let t2=p.slice(7,10).join("");
+row("Execution time 2",t2,formatExecTime(t2));
+
+let f2=p.slice(10,12).join("");
+row("Execution function 2",f2,formatExecFunction(f2));
+
+}
+
+/* 5.3 Modify interval of Heartbeat Packet (0x13) */
+
+function aa55Heartbeat(fc,p){
+
+if(isAck(p)){
+
+frameType("5.3 Modify Heartbeat Interval - Response (0x13)");
+row("Function Code",fc,"0x13 - Fixed");
+ackRow(p);
+return;
+
+}
+
+frameType("5.3 Modify interval of Heartbeat Packet (0x13)");
+
+row("Function Code",fc,"0x13 - Fixed");
+
+row("Heartbeat Interval",
+p.slice(0,2).join(""),
+hexToInt(p.slice(0,2).join(""))+" s");
+
+row("Reserved",p.slice(2,4).join(""),"Fixed");
+
+}
+
+/* 4.3 Configure time interval of periodic reporting uplinks (0x15) */
+
+function aa55Uplink(fc,p){
+
+frameType("4.3 Configure interval of periodic reporting uplinks (0x15)");
+
+row("Function Code",fc,"0x15 - Fixed");
+
+row("Schedule Checking Timer",
+p.slice(0,2).join(""),
+hexToInt(p.slice(0,2).join(""))+" s");
+
+row("Uplink Timer",
+p.slice(2,4).join(""),
+hexToInt(p.slice(2,4).join(""))+" s");
+
+row("Reserved",p.slice(4,6).join(""),"Fixed");
+
+}
+
+function isAck(p){
+return p.length===2&&p.join("")==="4f6b";
+}
+
+function ackRow(p){
+row("Data",p.join(""),"'Ok' - Successfully configured","ok");
+}
+
+/* ============================================================
+   0x25 Query Energy Data / Server response
+   ============================================================ */
+
+function decode25(b){
+
+frameType("2.1 Query Energy Data / Server Response (0x25)");
+
+row("Frame Head",b[0],"Data frame start");
+row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
+
+lengthCheck(hexToInt(b[1]),b.length);
+
+addressRow(b.slice(2,6));
+
+row("Contents",b[6],b[6]==="ff"?"0xFF - Fixed":"Unexpected");
+
+crcTail(b);
+
+}
+
+/* ============================================================
+   0x26 Query Energy Data response
+   ============================================================ */
+
+function decode26(b){
+
+frameType("2.1 Query Energy Data - Response (0x26)");
+
+row("Frame Head",b[0],"Data frame start");
+
+row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
+
+lengthCheck(hexToInt(b[1]),b.length);
+
+addressRow(b.slice(2,6),"Device Address");
+
+row("Device Working Time",
+b.slice(6,10).join(""),
+hexToInt(b.slice(6,10).join(""))+" min");
+
+row("Restart Times",
+b.slice(10,12).join(""),
+hexToInt(b.slice(10,12).join("")));
+
+row("Active Energy",
+b.slice(12,16).join(""),
+hexToInt(b.slice(12,16).join(""))/100+" kWh");
+
+row("Reactive Power",
+b.slice(16,20).join(""),
+hexToInt(b.slice(16,20).join(""))/100+" VAR");
+
+row("Apparent Power",
+b.slice(20,24).join(""),
+hexToInt(b.slice(20,24).join(""))/100+" VA");
+
+crcTail(b);
+
+}
+
+/* ============================================================
+   2.3 Query Clock (0x32) / response (0x4A)
+   ============================================================ */
+
+function decode32(b){
+
+frameType("2.3 Query Clock (0x32)");
+
+row("Frame Head",b[0],"Data frame start");
+row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
+
+lengthCheck(hexToInt(b[1]),b.length);
+
+addressRow(b.slice(2,6));
+
+row("Contents",b[6],"0xFF - Fixed");
+
+crcTail(b);
+
+}
+
+function decode4A(b){
+
+frameType("2.3 Query Clock - Response (0x4A)");
+
+row("Frame Head",b[0],"Data frame start");
+row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
+
+lengthCheck(hexToInt(b[1]),b.length);
+
+addressRow(b.slice(2,6),"Device Address");
+
+let timeHex=b.slice(6,9).join("");
+row("Time",timeHex,formatTimeUTC7(timeHex)+" (UTC+7)");
+
+let dateHex=b.slice(9,12).join("");
+row("Date",dateHex,formatDateWithOverflow(dateHex));
+
+crcTail(b);
+
+}
+
+/* ============================================================
+   3.1 Lighting switching and dimming command (0x15)
+   ============================================================ */
+
+function decode15(b){
+
+frameType("3.1 Lighting switching and dimming command (0x15)");
+
+row("Frame Head",b[0],"Data frame start");
+row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
+
+lengthCheck(hexToInt(b[1]),b.length);
+
+addressRow(b.slice(2,6));
+
+row("Port",b[6],
+b[6]==="05"?"Switching port":
+b[6]==="04"?"Dimming port":
+b[6]==="06"?"Reserved port":"Unknown");
+
+if(b[6]==="04")
+row("Action Command",b[7],"Dimming "+hexToInt(b[7])+" %");
+else
+row("Action Command",b[7],b[7]==="00"?"On":b[7]==="01"?"Off":"Unknown");
+
+crcTail(b);
+
+}
+
+/* ============================================================
+   3.1 Response - full status frame (0x11)
+   ============================================================ */
 
 function decodeICODE(bytes){
 
-row("Frame head",bytes[0],"Start Frame");
+frameType("3.1 Lighting / dimming command - Response (0x11)");
 
-row("Length",bytes[1],hexToInt(bytes[1]));
+row("Frame head",bytes[0],"Data frame start");
 
-row("Address",
-bytes.slice(2,6).join(""),
-hexToInt(bytes.slice(2,6).join("")));
+row("Length",bytes[1],hexToInt(bytes[1])+" bytes (total frame length)");
 
-row("Dimming port",bytes[6],"04");
-row("Dimming function",bytes[7],"10");
+lengthCheck(hexToInt(bytes[1]),bytes.length);
+
+addressRow(bytes.slice(2,6));
+
+row("Dimming port",bytes[6],"0x04 - Fixed");
+row("Dimming function code",bytes[7],"0x10 - Fixed");
 
 row("Dimming value",
 bytes[8],
 hexToInt(bytes[8])+" %");
 
-row("Turn port",bytes[9],"05");
-row("Turn function",bytes[10],"04");
+row("Turn on/off port",bytes[9],"0x05 - Fixed");
+row("Turn on/off function code",bytes[10],"0x04 - Fixed");
 
-row("Turn status",
+row("Turn on/off status",
 bytes[11],
-bytes[11]=="00"?"ON":"OFF");
+bytes[11]==="00"?"ON":"OFF");
 
-row("Collection port",bytes[12],"00");
-row("Collection function",bytes[13],"20");
-row("Effective length",bytes[14],"0C");
+row("Collection port",bytes[12],"0x00 - Fixed");
+row("Collection function code",bytes[13],"0x20 - Fixed");
+row("Effective length",bytes[14],"0x0C - Fixed");
 
 row("Voltage",
 bytes.slice(15,17).join(""),
@@ -494,13 +1165,13 @@ hexToInt(bytes.slice(25,29).join(""))/100+" kWh");
 
 let tempHex=bytes.slice(29,31).join("");
 
-let temp=(hexToInt(tempHex)-10000)/100;
+let temp=(hexToSigned16(tempHex)-10000)/100;
 
 row("Temperature",tempHex,temp+" °C");
 
 let timeHex=bytes.slice(31,34).join("");
 
-row("Time",timeHex,formatTimeUTC7(timeHex));
+row("Time",timeHex,formatTimeUTC7(timeHex)+" (UTC+7)");
 
 let dateHex=bytes.slice(34,37).join("");
 
@@ -508,7 +1179,7 @@ row("Date",dateHex,formatDateWithOverflow(dateHex));
 
 let idx=37;
 
-function get4(name,signed=false){
+function get4(name,signed=false,unit=""){
 
 let hex=bytes.slice(idx,idx+4).join("");
 
@@ -516,103 +1187,786 @@ let val=signed?
 hexToSigned32(hex):
 hexToInt(hex);
 
-row(name,hex,val);
+row(name,hex,val+(unit?" "+unit:""));
 
 idx+=4;
 
 }
 
-get4("Signal Power",true);
-get4("Total Power",true);
-get4("Tx Power",true);
-//get4("Rx Power",true);
-get4("Tx Time");
-get4("Rx Time");
+get4("Signal Power",true,"dBm");
+get4("Total Power",true,"dBm");
+get4("Tx Power",true,"dBm");
+get4("Tx Time",false,"ms");
+get4("Rx Time",false,"ms");
 get4("Cell ID");
 get4("ECL");
-get4("SNR",true);
+get4("SNR",true,"dB");
 get4("Earfcn");
 get4("PCI");
-get4("RSRQ",true);
+get4("RSRQ",true,"dB");
+
+/* remaining : working times 4 + restart 2 [+ photo adc 1] + crc 2 */
+
+let remaining=bytes.length-idx;
 
 row("Device Working Times",
-bytes.slice(bytes.length-8,bytes.length-4).join(""),
-hexToInt(bytes.slice(bytes.length-8,bytes.length-4).join(""))+" min");
+bytes.slice(idx,idx+4).join(""),
+hexToInt(bytes.slice(idx,idx+4).join(""))+" min");
+
+idx+=4;
 
 row("Restart Times",
-bytes.slice(bytes.length-4,bytes.length-2).join(""),
-hexToInt(bytes.slice(bytes.length-4,bytes.length-2).join("")));
+bytes.slice(idx,idx+2).join(""),
+hexToInt(bytes.slice(idx,idx+2).join("")));
 
-let crcFrame=bytes.slice(bytes.length-2).join("").toLowerCase();
+idx+=2;
 
-let crcCalc=calcCRC16(bytes.slice(0,bytes.length-2));
+if(remaining>=9){
 
-let status=(crcFrame===crcCalc)?"OK":"ERROR";
+row("Photo ADC",
+bytes[idx],
+hexToInt(bytes[idx])*10+" mV (ADC "+hexToInt(bytes[idx])+")");
 
-row("CRC16",
-crcFrame,
-"Calc 0x"+crcCalc+" = "+status,
-status==="OK"?"ok":"err");
+idx++;
 
 }
 
-function decode26(bytes){
+crcTail(bytes);
 
-row("Frame head",bytes[0],"Start Frame");
+}
 
-row("Length",bytes[1],hexToInt(bytes[1])+" bytes");
+/* ============================================================
+   0x88 generic acknowledge
+   ============================================================ */
 
+function decode88(b){
 
-row("Device Address",
-bytes.slice(2,6).join(""),
-hexToInt(bytes.slice(2,6).join("")));
+frameType("Generic device acknowledge (0x88)");
 
+row("Frame Head",b[0],"Data frame start");
+row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
 
-row("Device Working Time",
-bytes.slice(6,10).join(""),
-hexToInt(bytes.slice(6,10).join(""))+" min");
+lengthCheck(hexToInt(b[1]),b.length);
 
+addressRow(b.slice(2,6));
 
-row("Restart Times",
-bytes.slice(10,12).join(""),
-hexToInt(bytes.slice(10,12).join("")));
+crcTail(b);
 
+}
 
-row("Active Energy",
-bytes.slice(12,16).join(""),
-hexToInt(bytes.slice(12,16).join(""))/100+" kWh");
+/* ============================================================
+   0x36 / 0x37 reset commands
+   ============================================================ */
 
+function decodeReset(b,label){
 
-row("Reactive Power",
-bytes.slice(16,20).join(""),
-hexToInt(bytes.slice(16,20).join(""))/100+" VAR");
+frameType(label);
 
+row("Frame Head",b[0],"Data frame start");
+row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
 
-row("Apparent Power",
-bytes.slice(20,24).join(""),
-hexToInt(bytes.slice(20,24).join(""))/100+" VA");
+lengthCheck(hexToInt(b[1]),b.length);
 
+addressRow(b.slice(2,6));
 
-/* CRC */
+crcTail(b);
 
-let crcFrame=
-bytes.slice(bytes.length-2).join("").toLowerCase();
+}
 
-let crcCalc=
-calcCRC16(bytes.slice(0,bytes.length-2));
+/* ============================================================
+   4.6 FOTA (0x51) / status (0x52)
+   ============================================================ */
 
-let status=(crcFrame===crcCalc)?"OK":"ERROR";
+function decode51(b){
 
-row(
-"CRC16",
-crcFrame,
-"Calc 0x"+crcCalc+" = "+status,
-status==="OK"?"ok":"err"
-);
+frameType("4.6 Modify firmware by FOTA (0x51)");
+
+row("Frame Head",b[0],"Data frame start");
+
+let len=hexToInt(b[1]+b[2]);
+
+row("Length",b[1]+b[2],len+" bytes (total frame length)");
+
+lengthCheck(len,b.length);
+
+let url=b.slice(3,b.length-2);
+
+row("FOTA URL",url.join(""),asciiDecode(url));
+
+crcTail(b);
+
+}
+
+function decode52(b){
+
+frameType("4.6 FOTA status - Response (0x52)");
+
+row("Frame Head",b[0],"Data frame start");
+
+let len=hexToInt(b[1]+b[2]);
+
+row("Length",b[1]+b[2],len+" bytes (total frame length)");
+
+lengthCheck(len,b.length);
+
+let st={
+"00":"Success",
+"01":"Length Error",
+"02":"MD5 Error (firmware corrupt / FOTA init failed / buffer issue)",
+"03":"Failed running FOTA (magic number or CRC32)",
+"04":"Not bin file",
+"05":"Download FOTA failed (MD5 download / HTTP issue / bin too large)"
+};
+
+row("Status",b[3],st[b[3]]||"Unknown",
+b[3]==="00"?"ok":"err");
+
+crcTail(b);
+
+}
+
+/* ============================================================
+   4.7 Time zone setting (0x70)
+   ============================================================ */
+
+function decode70(b){
+
+frameType("4.7 Time zone Setting (0x70)");
+
+row("Frame Head",b[0],"Data frame start");
+row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
+
+lengthCheck(hexToInt(b[1]),b.length);
+
+addressRow(b.slice(2,6));
+
+let tz=hexToInt(b[6]);
+
+row("Time zone",b[6],"UTC+"+tz,tz<=14?"ok":"err");
+
+crcTail(b);
+
+}
+
+/* ============================================================
+   4.7 Modify pointing IP and port (0xA1)
+   ============================================================ */
+
+function decodeA1(b){
+
+frameType("4.7 Modify pointing IP and port number (0xA1)");
+
+row("Frame Head",b[0],"Data frame start");
+
+let len=hexToInt(b[1]+b[2]);
+
+row("Length",b[1]+b[2],len+" bytes (total frame length)");
+
+lengthCheck(len,b.length);
+
+addressRow(b.slice(3,7));
+
+let ip=b.slice(7,11);
+
+row("IP",ip.join(""),ip.map(hexToInt).join("."));
+
+row("Port no.",
+b.slice(11,13).join(""),
+hexToInt(b.slice(11,13).join("")));
+
+crcTail(b);
+
+}
+
+/* ============================================================
+   4.8 Modify pointing URL and port (0xA3)
+   ============================================================ */
+
+function decodeA3(b){
+
+frameType("4.8 Modify pointing URL and port number (0xA3)");
+
+row("Frame Head",b[0],"Data frame start");
+
+let len=hexToInt(b[1]+b[2]);
+
+row("Length",b[1]+b[2],len+" bytes (total frame length)");
+
+lengthCheck(len,b.length);
+
+addressRow(b.slice(3,7));
+
+let url=b.slice(7,b.length-4);
+
+row("URL",url.join(""),asciiDecode(url));
+
+row("Port no.",
+b.slice(b.length-4,b.length-2).join(""),
+hexToInt(b.slice(b.length-4,b.length-2).join("")));
+
+crcTail(b);
+
+}
+
+/* ============================================================
+   4.9 Modify APN (0xA5)
+   ============================================================ */
+
+function decodeA5(b){
+
+frameType("4.9 Modify APN of LTE CAT1 light controller (0xA5)");
+
+row("Frame Head",b[0],"Data frame start");
+
+let len=hexToInt(b[1]+b[2]);
+
+row("Length",b[1]+b[2],len+" bytes (total frame length)");
+
+lengthCheck(len,b.length);
+
+addressRow(b.slice(3,7));
+
+let apn=b.slice(7,b.length-2);
+
+row("APN",apn.join(""),asciiDecode(apn));
+
+crcTail(b);
+
+}
+
+function loadSample(){
+
+let s=document.getElementById("sample");
+
+if(!s.value)return;
+
+document.getElementById("hexInput").value=s.value;
+
+parse();
+
+}
+
+/* ============================================================
+   FRAME BUILDER
+   ============================================================ */
+
+function encInt(n,bytes){
+
+let v=Math.round(Number(n));
+
+if(!isFinite(v)||v<0)v=0;
+
+return (v>>>0).toString(16).padStart(bytes*2,'0').slice(-bytes*2).toLowerCase();
+
+}
+
+function encAscii(s){
+
+let out="";
+
+s=s||"";
+
+for(let i=0;i<s.length;i++)
+out+=(s.charCodeAt(i)&0xFF).toString(16).padStart(2,'0');
+
+return out;
+
+}
+
+function encAddr(s){
+
+let h=(s||"").replace(/[^0-9a-fA-F]/g,'');
+
+return h.padStart(8,'0').slice(-8).toLowerCase();
+
+}
+
+function encTime(s){
+
+let p=(s||"").split(":");
+
+return encInt(p[0]||0,1)+encInt(p[1]||0,1)+encInt(p[2]||0,1);
+
+}
+
+function encIP(s){
+
+let p=(s||"").split(".");
+
+let out="";
+
+for(let i=0;i<4;i++)
+out+=encInt(p[i]||0,1);
+
+return out;
+
+}
+
+function crcOf(hex){
+return calcCRC16(hex.match(/.{2}/g)||[]);
+}
+
+/* head + length (total frame length) + body + CRC */
+
+function tailFrame(head,lenBytes,body){
+
+let total=1+lenBytes+body.length/2+2;
+
+let core=head+encInt(total,lenBytes)+body;
+
+return core+crcOf(core);
+
+}
+
+/* 0xAA55 command frame : length = bytes after CRC16 */
+
+function aa55Frame(payload){
+
+return "aa55"+encInt(payload.length/2,2)+"01000300"+crcOf(payload)+payload;
+
+}
+
+/* execution function : 0500 On / 0501 Off / 04XX dimming */
+
+function encFunc(mode,level){
+return mode==="04"?"04"+encInt(level,1):mode;
+}
+
+/* signed 32-bit */
+
+function encI32(n){
+
+let v=Math.round(Number(n));
+
+if(!isFinite(v))v=0;
+
+return ((v|0)>>>0).toString(16).padStart(8,'0');
+
+}
+
+/* BCD : two decimal digits per byte, the digits are the nibbles */
+
+function encBCD(s,bytes){
+
+return (s||"").replace(/\D/g,'').slice(0,bytes*2).padEnd(bytes*2,'0');
+
+}
+
+/* time transmitted as SS MM HH */
+
+function encTimeRev(s){
+
+let p=(s||"").split(":");
+
+return encInt(p[2]||0,1)+encInt(p[1]||0,1)+encInt(p[0]||0,1);
+
+}
+
+/* date transmitted as DD MM YY */
+
+function encDate(s){
+
+let p=(s||"").split(/[\/\-\.]/);
+
+return encInt(p[0]||0,1)+encInt(p[1]||0,1)+encInt((p[2]||0).toString().slice(-2),1);
+
+}
+
+/* firmware version "1.1.8" */
+
+function encFW(s){
+
+let p=(s||"").split(".");
+
+return encInt(p[0]||0,1)+encInt(p[1]||0,1)+encInt(p[2]||0,1);
+
+}
+
+/* 0xAA55 registration / heartbeat : length = total frame length */
+
+function aa55Reg(payload){
+
+return "aa55"+encInt(payload.length/2+10,2)+"03000300"+crcOf(payload)+payload;
+
+}
+
+const S="Server \u2192 Perangkat";
+
+const D="Perangkat \u2192 Server";
+
+const F_ADDR={id:"addr",label:"Device Address (hex, FFFFFFFF = broadcast)",type:"text",def:"00000001"};
+
+const F_STRATEGY={id:"no",label:"Strategy No. (1-3)",type:"num",def:1,min:1,max:3};
+
+const F_ENABLE={id:"en",label:"Enable Byte",type:"select",def:"00",
+opts:[["00","00 - Enable"],["01","01 - Disable"]]};
+
+const FUNC_OPTS=[["0500","Light On"],["0501","Light Off"],["04","Dimming"]];
+
+const BUILDERS=[
+
+{g:S,n:"2.1 Query Energy Data (0x25)",f:[F_ADDR],
+b:v=>tailFrame("25",1,encAddr(v.addr)+"ff")},
+
+{g:S,n:"2.3 Query Clock (0x32)",f:[F_ADDR],
+b:v=>tailFrame("32",1,encAddr(v.addr)+"ff")},
+
+{g:S,n:"3.1 Turn light On / Off (0x15)",
+f:[F_ADDR,{id:"act",label:"Action Command",type:"select",def:"00",
+opts:[["00","00 - On"],["01","01 - Off"]]}],
+b:v=>tailFrame("15",1,encAddr(v.addr)+"05"+v.act)},
+
+{g:S,n:"3.1 Dimming (0x15)",
+f:[F_ADDR,{id:"lvl",label:"Dimming level (0-100 %)",type:"num",def:50,min:0,max:100}],
+b:v=>tailFrame("15",1,encAddr(v.addr)+"04"+encInt(v.lvl,1))},
+
+{g:S,n:"4.4 Reset Accumulative Energy (0x37)",f:[F_ADDR],
+b:v=>tailFrame("37",1,encAddr(v.addr))},
+
+{g:S,n:"4.5 Reset Working / Restart Times (0x36)",f:[F_ADDR],
+b:v=>tailFrame("36",1,encAddr(v.addr))},
+
+{g:S,n:"4.6 Modify firmware by FOTA (0x51)",
+f:[{id:"url",label:"FOTA URL",type:"text",
+def:"https://smartpju.icode.id//firmware/LCU_CAT_1_Firmware_1108.1.1_LuatOS-SoC_EC618.bin"}],
+b:v=>tailFrame("51",2,encAscii(v.url))},
+
+{g:S,n:"4.7 Time zone Setting (0x70)",
+f:[F_ADDR,{id:"tz",label:"Time zone (0-14)",type:"num",def:7,min:0,max:14}],
+b:v=>tailFrame("70",1,encAddr(v.addr)+encInt(v.tz,1))},
+
+{g:S,n:"4.7 Modify pointing IP and port (0xA1)",
+f:[F_ADDR,{id:"ip",label:"IP address",type:"text",def:"176.223.131.164"},
+{id:"port",label:"Port no.",type:"num",def:6012,min:0,max:65535}],
+b:v=>tailFrame("a1",2,encAddr(v.addr)+encIP(v.ip)+encInt(v.port,2))},
+
+{g:S,n:"4.8 Modify pointing URL and port (0xA3)",
+f:[F_ADDR,{id:"url",label:"URL",type:"text",def:"smartpju.icode.id"},
+{id:"port",label:"Port no.",type:"num",def:6012,min:0,max:65535}],
+b:v=>tailFrame("a3",2,encAddr(v.addr)+encAscii(v.url)+encInt(v.port,2))},
+
+{g:S,n:"4.9 Modify APN (0xA5)",
+f:[F_ADDR,{id:"apn",label:"APN",type:"text",def:"internet"}],
+b:v=>tailFrame("a5",2,encAddr(v.addr)+encAscii(v.apn))},
+
+{g:S,n:"2.2 Query Time Strategy (0xAA55 / 0xD3)",
+f:[F_ADDR,F_STRATEGY],
+b:v=>aa55Frame(encAddr(v.addr)+"d3"+encInt(v.no,1))},
+
+{g:S,n:"4.1 Strategy Settings (0xAA55 / 0xD4)",
+f:[F_ADDR,F_STRATEGY,F_ENABLE,
+{id:"t1",label:"Execution time 1 (HH:MM:SS)",type:"text",def:"18:00:30"},
+{id:"m1",label:"Execution function 1",type:"select",def:"04",opts:FUNC_OPTS},
+{id:"l1",label:"Dimming level 1 (0-100 %)",type:"num",def:50,min:0,max:100},
+{id:"t2",label:"Execution time 2 (HH:MM:SS)",type:"text",def:"06:30:00"},
+{id:"m2",label:"Execution function 2",type:"select",def:"0501",opts:FUNC_OPTS},
+{id:"l2",label:"Dimming level 2 (0-100 %)",type:"num",def:100,min:0,max:100}],
+b:v=>aa55Frame(encAddr(v.addr)+"d4"+encInt(v.no,1)+v.en
++encTime(v.t1)+encFunc(v.m1,v.l1)
++encTime(v.t2)+encFunc(v.m2,v.l2))},
+
+{g:S,n:"4.2 Light controller Mode Settings (0xAA55 / 0xD2)",
+f:[F_ADDR,
+{id:"en",label:"Enable Byte",type:"select",def:"00",
+opts:[["00","00 - Enable Mode"],["01","01 - Disable Mode"]]},
+{id:"mode",label:"Mode",type:"select",def:"00",
+opts:[["00","00 - Schedule based control"],["01","01 - Light sensor based control"]]},
+{id:"iv",label:"Light sensor query interval",type:"num",def:60,min:0,max:255}],
+b:v=>aa55Frame(encAddr(v.addr)+"d2"+v.en+v.mode+encInt(v.iv,1))},
+
+{g:S,n:"4.3 Configure periodic uplink interval (0xAA55 / 0x15)",
+f:[F_ADDR,
+{id:"sch",label:"Schedule Checking Timer (detik)",type:"num",def:300,min:0,max:65535},
+{id:"up",label:"Uplink Timer (detik)",type:"num",def:1800,min:0,max:65535}],
+b:v=>aa55Frame(encAddr(v.addr)+"15"+encInt(v.sch,2)+encInt(v.up,2)+"ffff")},
+
+{g:S,n:"5.3 Modify Heartbeat Interval (0xAA55 / 0x13)",
+f:[F_ADDR,{id:"iv",label:"Heartbeat Interval (detik)",type:"num",def:540,min:0,max:65535}],
+b:v=>aa55Frame(encAddr(v.addr)+"13"+encInt(v.iv,2)+"ffff")}
+,
+
+{g:D,n:"2.1 Energy Data Response (0x26)",
+f:[F_ADDR,
+{id:"wt",label:"Device Working Time (menit)",type:"num",def:43200,min:0,max:4294967295},
+{id:"rt",label:"Restart Times",type:"num",def:5,min:0,max:65535},
+{id:"ae",label:"Active Energy (kWh)",type:"num",def:123.45,min:0,max:42949672},
+{id:"rp",label:"Reactive Power (VAR)",type:"num",def:12.5,min:0,max:42949672},
+{id:"ap",label:"Apparent Power (VA)",type:"num",def:198.7,min:0,max:42949672}],
+b:v=>tailFrame("26",1,encAddr(v.addr)+encInt(v.wt,4)+encInt(v.rt,2)
++encInt(v.ae*100,4)+encInt(v.rp*100,4)+encInt(v.ap*100,4))},
+
+{g:D,n:"2.3 Clock Response (0x4A)",
+f:[F_ADDR,
+{id:"t",label:"Time UTC+0 (HH:MM:SS)",type:"text",def:"10:45:30"},
+{id:"d",label:"Date UTC+0 (DD/MM/YY)",type:"text",def:"12/08/26"}],
+b:v=>tailFrame("4a",1,encAddr(v.addr)+encTimeRev(v.t)+encDate(v.d))},
+
+{g:D,n:"3.1 Full Status Response (0x11)",
+f:[F_ADDR,
+{id:"dim",label:"Dimming value (0-100 %)",type:"num",def:50,min:0,max:100},
+{id:"sw",label:"Turn on/off status",type:"select",def:"00",
+opts:[["00","00 - ON"],["01","01 - OFF"]]},
+{id:"volt",label:"Voltage (V)",type:"num",def:220.5,min:0,max:655},
+{id:"cur",label:"Current (A)",type:"num",def:0.85,min:0,max:65},
+{id:"pw",label:"Active Power (W)",type:"num",def:187.3,min:0,max:6553},
+{id:"rp",label:"Reactive Power (VAR)",type:"num",def:12.5,min:0,max:6553},
+{id:"fr",label:"Frequency (Hz)",type:"num",def:50.02,min:0,max:655},
+{id:"ae",label:"Active Energy (kWh)",type:"num",def:123.45,min:0,max:42949672},
+{id:"tp",label:"Temperature (C)",type:"num",def:35.2,min:-100,max:500},
+{id:"t",label:"Time UTC+0 (HH:MM:SS)",type:"text",def:"10:45:30"},
+{id:"d",label:"Date UTC+0 (DD/MM/YY)",type:"text",def:"12/08/26"},
+{id:"sig",label:"Signal Power (dBm)",type:"num",def:-85,min:-140,max:0},
+{id:"tot",label:"Total Power (dBm)",type:"num",def:-70,min:-140,max:0},
+{id:"tx",label:"Tx Power (dBm)",type:"num",def:12,min:-50,max:50},
+{id:"txt",label:"Tx Time (ms)",type:"num",def:123456,min:0,max:4294967295},
+{id:"rxt",label:"Rx Time (ms)",type:"num",def:234567,min:0,max:4294967295},
+{id:"cell",label:"Cell ID",type:"num",def:12345678,min:0,max:4294967295},
+{id:"ecl",label:"ECL",type:"num",def:0,min:0,max:255},
+{id:"snr",label:"SNR (dB)",type:"num",def:15,min:-50,max:50},
+{id:"ear",label:"Earfcn",type:"num",def:1650,min:0,max:262143},
+{id:"pci",label:"PCI",type:"num",def:123,min:0,max:503},
+{id:"rsrq",label:"RSRQ (dB)",type:"num",def:-11,min:-50,max:50},
+{id:"wt",label:"Device Working Times (menit)",type:"num",def:43200,min:0,max:4294967295},
+{id:"rt",label:"Restart Times",type:"num",def:5,min:0,max:65535},
+{id:"pa",label:"Photo ADC",type:"select",def:"1",
+opts:[["1","Sertakan (firmware 1.4+)"],["0","Tanpa Photo ADC (firmware lama)"]]},
+{id:"adc",label:"Photo ADC (x 10 mV)",type:"num",def:123,min:0,max:255}],
+b:v=>tailFrame("11",1,encAddr(v.addr)
++"0410"+encInt(v.dim,1)+"0504"+v.sw+"00200c"
++encInt(v.volt*100,2)+encInt(v.cur*1000,2)+encInt(v.pw*10,2)
++encInt(v.rp*10,2)+encInt(v.fr*100,2)+encInt(v.ae*100,4)
++encInt(v.tp*100+10000,2)+encTimeRev(v.t)+encDate(v.d)
++encI32(v.sig)+encI32(v.tot)+encI32(v.tx)+encI32(v.txt)+encI32(v.rxt)
++encI32(v.cell)+encI32(v.ecl)+encI32(v.snr)+encI32(v.ear)+encI32(v.pci)+encI32(v.rsrq)
++encInt(v.wt,4)+encInt(v.rt,2)
++(v.pa==="1"?encInt(v.adc,1):""))},
+
+{g:D,n:"Generic Acknowledge (0x88)",f:[F_ADDR],
+b:v=>tailFrame("88",1,encAddr(v.addr))},
+
+{g:D,n:"4.6 FOTA Status Response (0x52)",
+f:[{id:"st",label:"Status",type:"select",def:"00",
+opts:[["00","0x00 - Success"],["01","0x01 - Length Error"],["02","0x02 - MD5 Error"],
+["03","0x03 - Failed running FOTA"],["04","0x04 - Not bin file"],["05","0x05 - Download FOTA Failed"]]}],
+b:v=>tailFrame("52",2,v.st)},
+
+{g:D,n:"2.2 Query Time Strategy Response (0xAA55 / 0xD3)",
+f:[F_ADDR,F_STRATEGY,F_ENABLE,
+{id:"t1",label:"Execution time 1 (HH:MM:SS)",type:"text",def:"18:00:30"},
+{id:"m1",label:"Execution function 1",type:"select",def:"04",opts:FUNC_OPTS},
+{id:"l1",label:"Dimming level 1 (0-100 %)",type:"num",def:50,min:0,max:100},
+{id:"t2",label:"Execution time 2 (HH:MM:SS)",type:"text",def:"06:30:00"},
+{id:"m2",label:"Execution function 2",type:"select",def:"0501",opts:FUNC_OPTS},
+{id:"l2",label:"Dimming level 2 (0-100 %)",type:"num",def:100,min:0,max:100}],
+b:v=>aa55Frame(encAddr(v.addr)+"d3"+encInt(v.no,1)+v.en
++encTime(v.t1)+encFunc(v.m1,v.l1)
++encTime(v.t2)+encFunc(v.m2,v.l2))},
+
+{g:D,n:"Setting Acknowledge 'Ok' (0xAA55 / D4-D2-13)",
+f:[F_ADDR,{id:"fc",label:"Function Code",type:"select",def:"d4",
+opts:[["d4","0xD4 - Strategy Settings"],["d2","0xD2 - Mode Settings"],["13","0x13 - Heartbeat Interval"]]}],
+b:v=>aa55Frame(encAddr(v.addr)+v.fc+"4f6b")},
+
+{g:D,n:"5.1 Registration Packet (0xAA55 / 0xD0)",
+f:[F_ADDR,
+{id:"imei",label:"IMEI (16 digit BCD)",type:"text",def:"0867856051234567"},
+{id:"imsi",label:"IMSI (16 digit BCD)",type:"text",def:"0510890123456789"},
+{id:"csq",label:"CSQ",type:"num",def:24,min:0,max:99},
+{id:"pci",label:"PCI",type:"num",def:123,min:0,max:255},
+{id:"fw",label:"FW Version (mayor.minor.patch)",type:"text",def:"1.1.8"},
+{id:"tz",label:"Time zone (0-14)",type:"num",def:7,min:0,max:14}],
+b:v=>aa55Reg(encAddr(v.addr)+"d0"
++"07"+encBCD(v.imei,8)+"08"+encBCD(v.imsi,8)
++"03"+encInt(v.csq,1)+"05"+encInt(v.pci,1)
++"09"+encFW(v.fw)+encInt(v.tz,1))},
+
+{g:D,n:"5.2 Heartbeat Packet (0xAA55 / 0xD0)",
+f:[F_ADDR,
+{id:"imei",label:"IMEI (16 digit BCD)",type:"text",def:"0867856051234567"},
+{id:"csq",label:"CSQ",type:"num",def:24,min:0,max:99},
+{id:"fw",label:"FW Version (mayor.minor.patch)",type:"text",def:"1.1.8"},
+{id:"tz",label:"Time zone (0-14)",type:"num",def:7,min:0,max:14}],
+b:v=>aa55Reg(encAddr(v.addr)+"d0"
++"07"+encBCD(v.imei,8)
++"03"+encInt(v.csq,1)
++"09"+encFW(v.fw)+encInt(v.tz,1))}
+
+];
+
+function initBuilder(){
+
+let s=document.getElementById("cmd");
+
+let html="";
+let group="";
+
+BUILDERS.forEach((x,i)=>{
+
+if(x.g!==group){
+
+if(group)html+='</optgroup>';
+
+html+='<optgroup label="'+x.g+'">';
+
+group=x.g;
+
+}
+
+html+='<option value="'+i+'">'+x.n+'</option>';
+
+});
+
+s.innerHTML=html+'</optgroup>';
+
+renderForm();
+
+}
+
+function renderForm(){
+
+let d=BUILDERS[document.getElementById("cmd").value]||BUILDERS[0];
+
+let html="";
+
+for(let f of d.f){
+
+html+='<div class="field"><label for="f_'+f.id+'">'+f.label+'</label>';
+
+if(f.type==="select"){
+
+html+='<select id="f_'+f.id+'" onchange="buildNow()">'
++f.opts.map(o=>'<option value="'+o[0]+'"'+(o[0]===f.def?" selected":"")+'>'+o[1]+'</option>').join("")
++'</select>';
+
+}else if(f.type==="num"){
+
+html+='<input id="f_'+f.id+'" type="number" value="'+f.def+'" min="'+f.min+'" max="'+f.max+'" oninput="buildNow()">';
+
+}else{
+
+html+='<input id="f_'+f.id+'" type="text" value="'+f.def+'" oninput="buildNow()">';
+
+}
+
+html+='</div>';
+
+}
+
+document.getElementById("form").innerHTML=html;
+
+buildNow();
+
+syncFields();
+
+}
+
+function buildNow(){
+
+let d=BUILDERS[document.getElementById("cmd").value]||BUILDERS[0];
+
+let v={};
+
+let warn=[];
+
+for(let f of d.f){
+
+let el=document.getElementById("f_"+f.id);
+
+v[f.id]=el.value;
+
+if(f.type==="num"){
+
+let n=Number(el.value);
+
+if(!isFinite(n)||n<f.min||n>f.max)
+warn.push(f.label+" di luar rentang "+f.min+"-"+f.max);
+
+}
+
+if(f.id==="addr"&&!/^[0-9a-fA-F]{1,8}$/.test(el.value.replace(/\s/g,'')))
+warn.push("Address harus 1-8 digit hex");
+
+if(f.type==="text"&&f.id.match(/^t[12]$/)&&!/^\d{1,2}:\d{1,2}:\d{1,2}$/.test(el.value))
+warn.push(f.label+" harus format HH:MM:SS");
+
+}
+
+syncFields();
+
+let hex=d.b(v).toUpperCase();
+
+document.getElementById("built").innerText=hex;
+
+let info=document.getElementById("builtInfo");
+
+info.innerText=(hex.length/2)+" byte - CRC16 0x"+hex.slice(-4)
++(warn.length?"  |  "+warn.join("  |  "):"");
+
+info.className=warn.length?"muted err":"muted";
+
+}
+
+/* only show fields that matter for the current selection */
+
+function syncFields(){
+
+let pa=document.getElementById("f_pa");
+let adc=document.getElementById("f_adc");
+
+if(pa&&adc&&adc.parentNode)
+adc.parentNode.style.display=(pa.value==="1")?"flex":"none";
+
+for(let i of [1,2]){
+
+let m=document.getElementById("f_m"+i);
+let l=document.getElementById("f_l"+i);
+
+if(m&&l&&l.parentNode)
+l.parentNode.style.display=(m.value==="04")?"flex":"none";
+
+}
+
+}
+
+function copyBuilt(){
+
+let t=document.getElementById("built").innerText;
+
+navigator.clipboard.writeText(t).then(()=>{
+
+let b=document.getElementById("copyBtn");
+
+b.innerText="Tersalin";
+
+setTimeout(()=>{b.innerText="Copy";},1200);
+
+},()=>{});
+
+}
+
+function decodeBuilt(){
+
+document.getElementById("hexInput").value=document.getElementById("built").innerText;
+
+showTab("decode");
+
+parse();
+
+}
+
+function showTab(t){
+
+document.getElementById("tab-decode").style.display=(t==="decode")?"block":"none";
+document.getElementById("tab-build").style.display=(t==="build")?"block":"none";
+
+document.getElementById("btn-decode").className=(t==="decode")?"tab active":"tab";
+document.getElementById("btn-build").className=(t==="build")?"tab active":"tab";
 
 }
 
 /* UX FEATURES */
+
+initBuilder();
 
 const hexBox=document.getElementById("hexInput");
 
@@ -654,4 +2008,3 @@ parse();
 
 </body>
 </html>
-
