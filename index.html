@@ -355,10 +355,6 @@ if(cls)v.className=cls;
 
 }
 
-function frameType(name){
-row("Frame Type","",name,"info");
-}
-
 /* CRC located at the end of the frame */
 
 function crcTail(bytes){
@@ -381,16 +377,17 @@ status==="OK"?"ok":"err");
 
 }
 
-/* total frame length check (1 byte length field) */
+/* length field of the frame.
+   some firmware still declares the length of an older revision,
+   so a mismatch is only reported, never treated as an error.
+   CRC16 stays the real integrity check. */
 
-function lengthCheck(declared,actual){
+function lengthRow(hex,declared,actual){
 
-let status=(declared===actual);
-
-row("Length Check",
-"",
-actual+" bytes "+(status?"= Frame size OK":"!= declared "+declared),
-status?"ok":"err");
+row("Length",
+hex,
+declared+" bytes"+(declared===actual?"":"  (frame sebenarnya "+actual+" bytes)"),
+declared===actual?"":"info");
 
 }
 
@@ -444,8 +441,8 @@ case "4a": decode4A(bytes); return;
 case "15": decode15(bytes); return;
 case "11": decodeICODE(bytes); return;
 case "88": decode88(bytes); return;
-case "36": decodeReset(bytes,"4.5 Reset Accumulative Device Working / Restart Times"); return;
-case "37": decodeReset(bytes,"4.4 Reset Accumulative Energy"); return;
+case "36": decodeReset(bytes); return;
+case "37": decodeReset(bytes); return;
 case "51": decode51(bytes); return;
 case "52": decode52(bytes); return;
 case "70": decode70(bytes); return;
@@ -480,26 +477,12 @@ let isCommand=(hdr==="01000300");
 
 let declared=hexToInt(b[2]+b[3]);
 
-row("Length",b[2]+b[3],
-declared+(isCommand?" bytes after CRC16":" bytes (total frame length)"));
-
 let actual=isCommand?b.length-10:b.length;
 
-if(actual!==declared){
-
-row("Length Check",
-"",
-actual+" bytes != declared "+declared,
-"err");
-
-}else{
-
-row("Length Check",
-"",
-actual+" bytes = Frame size OK",
-"ok");
-
-}
+row("Length",b[2]+b[3],
+declared+(isCommand?" bytes setelah CRC16":" bytes")
++(declared===actual?"":"  (frame sebenarnya "+actual+" bytes)"),
+declared===actual?"":"info");
 
 if(isCommand){
 
@@ -585,9 +568,6 @@ function aa55D0(fc,p){
 /* registration carries IMSI (serial no. 0x08), heartbeat does not.
    the tag must be walked, an IMEI/IMSI digit byte can also be 0x08 */
 
-frameType(hasIMSI(p)
-?"5.1 Registration Packet (0xAA55 / 0xD0)"
-:"5.2 Heartbeat Packet (0xAA55 / 0xD0)");
 
 row("Function Code",fc,"0xD0 - Fixed");
 
@@ -658,14 +638,12 @@ function aa55D2(fc,p){
 
 if(isAck(p)){
 
-frameType("4.2 Light controller Mode settings - Response (0xD2)");
 row("Function Code",fc,"0xD2 - Fixed");
 ackRow(p);
 return;
 
 }
 
-frameType("4.2 Light controller Mode settings (0xD2)");
 
 row("Function Code",fc,"0xD2 - Fixed");
 
@@ -685,14 +663,12 @@ function aa55D3(fc,p){
 
 if(p.length<=1){
 
-frameType("2.2 Query Time Strategy (0xAA55 / 0xD3)");
 row("Function Code",fc,"0xD3 - Fixed");
 row("Strategy No.",p[0],hexToInt(p[0]));
 return;
 
 }
 
-frameType("2.2 Query Time Strategy - Response (0xD3)");
 
 row("Function Code",fc,"0xD3 - Fixed");
 
@@ -706,14 +682,12 @@ function aa55D4(fc,p){
 
 if(isAck(p)){
 
-frameType("4.1 Strategy Settings - Response (0xD4)");
 row("Function Code",fc,"0xD4 - Fixed");
 ackRow(p);
 return;
 
 }
 
-frameType("4.1 Single light controller strategy settings (0xD4)");
 
 row("Function Code",fc,"0xD4 - Fixed");
 
@@ -747,14 +721,12 @@ function aa55Heartbeat(fc,p){
 
 if(isAck(p)){
 
-frameType("5.3 Modify Heartbeat Interval - Response (0x13)");
 row("Function Code",fc,"0x13 - Fixed");
 ackRow(p);
 return;
 
 }
 
-frameType("5.3 Modify interval of Heartbeat Packet (0x13)");
 
 row("Function Code",fc,"0x13 - Fixed");
 
@@ -770,7 +742,6 @@ row("Reserved",p.slice(2,4).join(""),"Fixed");
 
 function aa55Uplink(fc,p){
 
-frameType("4.3 Configure interval of periodic reporting uplinks (0x15)");
 
 row("Function Code",fc,"0x15 - Fixed");
 
@@ -800,12 +771,9 @@ row("Data",p.join(""),"'Ok' - Successfully configured","ok");
 
 function decode25(b){
 
-frameType("2.1 Query Energy Data / Server Response (0x25)");
 
 row("Frame Head",b[0],"Data frame start");
-row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(b[1]),b.length);
+lengthRow(b[1],hexToInt(b[1]),b.length);
 
 addressRow(b.slice(2,6));
 
@@ -821,13 +789,10 @@ crcTail(b);
 
 function decode26(b){
 
-frameType("2.1 Query Energy Data - Response (0x26)");
 
 row("Frame Head",b[0],"Data frame start");
 
-row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(b[1]),b.length);
+lengthRow(b[1],hexToInt(b[1]),b.length);
 
 addressRow(b.slice(2,6),"Device Address");
 
@@ -861,12 +826,9 @@ crcTail(b);
 
 function decode32(b){
 
-frameType("2.3 Query Clock (0x32)");
 
 row("Frame Head",b[0],"Data frame start");
-row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(b[1]),b.length);
+lengthRow(b[1],hexToInt(b[1]),b.length);
 
 addressRow(b.slice(2,6));
 
@@ -878,12 +840,9 @@ crcTail(b);
 
 function decode4A(b){
 
-frameType("2.3 Query Clock - Response (0x4A)");
 
 row("Frame Head",b[0],"Data frame start");
-row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(b[1]),b.length);
+lengthRow(b[1],hexToInt(b[1]),b.length);
 
 addressRow(b.slice(2,6),"Device Address");
 
@@ -903,12 +862,9 @@ crcTail(b);
 
 function decode15(b){
 
-frameType("3.1 Lighting switching and dimming command (0x15)");
 
 row("Frame Head",b[0],"Data frame start");
-row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(b[1]),b.length);
+lengthRow(b[1],hexToInt(b[1]),b.length);
 
 addressRow(b.slice(2,6));
 
@@ -932,13 +888,10 @@ crcTail(b);
 
 function decodeICODE(bytes){
 
-frameType("3.1 Lighting / dimming command - Response (0x11)");
 
 row("Frame head",bytes[0],"Data frame start");
 
-row("Length",bytes[1],hexToInt(bytes[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(bytes[1]),bytes.length);
+lengthRow(bytes[1],hexToInt(bytes[1]),bytes.length);
 
 addressRow(bytes.slice(2,6));
 
@@ -1062,12 +1015,9 @@ crcTail(bytes);
 
 function decode88(b){
 
-frameType("Generic device acknowledge (0x88)");
 
 row("Frame Head",b[0],"Data frame start");
-row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(b[1]),b.length);
+lengthRow(b[1],hexToInt(b[1]),b.length);
 
 addressRow(b.slice(2,6));
 
@@ -1079,14 +1029,11 @@ crcTail(b);
    0x36 / 0x37 reset commands
    ============================================================ */
 
-function decodeReset(b,label){
+function decodeReset(b){
 
-frameType(label);
 
 row("Frame Head",b[0],"Data frame start");
-row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(b[1]),b.length);
+lengthRow(b[1],hexToInt(b[1]),b.length);
 
 addressRow(b.slice(2,6));
 
@@ -1100,15 +1047,12 @@ crcTail(b);
 
 function decode51(b){
 
-frameType("4.6 Modify firmware by FOTA (0x51)");
 
 row("Frame Head",b[0],"Data frame start");
 
 let len=hexToInt(b[1]+b[2]);
 
-row("Length",b[1]+b[2],len+" bytes (total frame length)");
-
-lengthCheck(len,b.length);
+lengthRow(b[1]+b[2],len,b.length);
 
 let url=b.slice(3,b.length-2);
 
@@ -1120,15 +1064,12 @@ crcTail(b);
 
 function decode52(b){
 
-frameType("4.6 FOTA status - Response (0x52)");
 
 row("Frame Head",b[0],"Data frame start");
 
 let len=hexToInt(b[1]+b[2]);
 
-row("Length",b[1]+b[2],len+" bytes (total frame length)");
-
-lengthCheck(len,b.length);
+lengthRow(b[1]+b[2],len,b.length);
 
 let st={
 "00":"Success",
@@ -1152,12 +1093,9 @@ crcTail(b);
 
 function decode70(b){
 
-frameType("4.7 Time zone Setting (0x70)");
 
 row("Frame Head",b[0],"Data frame start");
-row("Length",b[1],hexToInt(b[1])+" bytes (total frame length)");
-
-lengthCheck(hexToInt(b[1]),b.length);
+lengthRow(b[1],hexToInt(b[1]),b.length);
 
 addressRow(b.slice(2,6));
 
@@ -1175,15 +1113,12 @@ crcTail(b);
 
 function decodeA1(b){
 
-frameType("4.7 Modify pointing IP and port number (0xA1)");
 
 row("Frame Head",b[0],"Data frame start");
 
 let len=hexToInt(b[1]+b[2]);
 
-row("Length",b[1]+b[2],len+" bytes (total frame length)");
-
-lengthCheck(len,b.length);
+lengthRow(b[1]+b[2],len,b.length);
 
 addressRow(b.slice(3,7));
 
@@ -1205,15 +1140,12 @@ crcTail(b);
 
 function decodeA3(b){
 
-frameType("4.8 Modify pointing URL and port number (0xA3)");
 
 row("Frame Head",b[0],"Data frame start");
 
 let len=hexToInt(b[1]+b[2]);
 
-row("Length",b[1]+b[2],len+" bytes (total frame length)");
-
-lengthCheck(len,b.length);
+lengthRow(b[1]+b[2],len,b.length);
 
 addressRow(b.slice(3,7));
 
@@ -1235,15 +1167,12 @@ crcTail(b);
 
 function decodeA5(b){
 
-frameType("4.9 Modify APN of LTE CAT1 light controller (0xA5)");
 
 row("Frame Head",b[0],"Data frame start");
 
 let len=hexToInt(b[1]+b[2]);
 
-row("Length",b[1]+b[2],len+" bytes (total frame length)");
-
-lengthCheck(len,b.length);
+lengthRow(b[1]+b[2],len,b.length);
 
 addressRow(b.slice(3,7));
 
