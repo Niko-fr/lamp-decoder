@@ -107,11 +107,16 @@ background:linear-gradient(135deg,#00ffa6,#00c3ff);
 color:#002;
 }
 
-.conv{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:14px;
-margin-top:20px;
+.convbar{
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+align-items:flex-end;
+margin-top:22px;
+}
+
+.convbar .field{
+flex:1 1 200px;
 }
 
 .field{
@@ -120,12 +125,14 @@ flex-direction:column;
 }
 
 .field label{
-color:#9fffd8;
-font-size:12px;
+color:#7fd8b8;
+font-size:11px;
+letter-spacing:1px;
+text-transform:uppercase;
 margin-bottom:6px;
 }
 
-.field input{
+.field input,select{
 font-family:"JetBrains Mono",monospace;
 font-size:16px;
 background:#0b0f14;
@@ -136,22 +143,7 @@ padding:12px;
 outline:none;
 }
 
-.field input:focus{
-box-shadow:0 0 10px rgba(0,255,170,0.5);
-}
-
-select{
-font-family:"JetBrains Mono",monospace;
-font-size:15px;
-background:#0b0f14;
-color:#8affc1;
-border:1px solid #1e3a3a;
-border-radius:10px;
-padding:11px;
-outline:none;
-}
-
-select:focus{
+.field input:focus,select:focus{
 box-shadow:0 0 10px rgba(0,255,170,0.5);
 }
 
@@ -160,30 +152,95 @@ background:#0b0f14;
 color:#8affc1;
 }
 
-.chk{
-display:inline-block;
-margin-left:18px;
-color:#9fffd8;
+button.small{
+margin-top:0;
+padding:12px 18px;
 font-size:13px;
+}
+
+.convbtns{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+align-items:center;
+margin-top:14px;
+}
+
+.chk{
+color:#7fd8b8;
+font-size:12px;
 cursor:pointer;
+margin-left:6px;
 }
 
 .outlabel{
-color:#9fffd8;
-margin-top:22px;
+color:#7fd8b8;
+font-size:11px;
+letter-spacing:1px;
+text-transform:uppercase;
+margin-top:24px;
 margin-bottom:8px;
-font-size:12px;
 }
 
 .hexout{
 background:#0b0f14;
-border:1px solid #1e3a3a;
-border-radius:10px;
-padding:14px;
+border:1px solid #234;
+border-radius:12px;
+padding:18px;
 color:#00ffa6;
-font-size:18px;
+font-size:26px;
 word-break:break-all;
-min-height:22px;
+min-height:30px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+gap:10px;
+margin-top:14px;
+}
+
+.card{
+background:#0b0f14;
+border:1px solid #1c2c2c;
+border-radius:10px;
+padding:10px 12px;
+animation:fadeIn .25s ease;
+}
+
+.card span{
+display:block;
+color:#7fd8b8;
+font-size:10px;
+letter-spacing:1px;
+text-transform:uppercase;
+margin-bottom:4px;
+}
+
+.card b{
+color:#8affc1;
+font-size:15px;
+font-weight:600;
+word-break:break-all;
+}
+
+.card.wide{
+grid-column:1/-1;
+}
+
+details{
+margin-top:22px;
+background:#0b0f14;
+border:1px solid #1c2c2c;
+border-radius:10px;
+padding:12px 14px;
+}
+
+summary{
+color:#9fffd8;
+font-size:13px;
+cursor:pointer;
+outline:none;
 }
 
 footer{
@@ -245,7 +302,7 @@ transition:all .2s ease;
 
 <div class="tabs">
 <button id="btn-decode" class="tab active" onclick="showTab('decode')">Decode Frame</button>
-<button id="btn-conv" class="tab" onclick="showTab('conv')">Hex &harr; Desimal</button>
+<button id="btn-conv" class="tab" onclick="showTab('conv')">Konverter Bilangan</button>
 </div>
 
 <div id="tab-decode">
@@ -270,10 +327,10 @@ transition:all .2s ease;
 
 <div id="tab-conv" style="display:none">
 
-<div class="conv">
+<div class="convbar">
 
 <div class="field">
-<label for="cFrom">From</label>
+<label for="cFrom">Dari</label>
 <select id="cFrom" onchange="convRun()">
 <option value="bin">Binary</option>
 <option value="dec">Decimal</option>
@@ -284,7 +341,7 @@ transition:all .2s ease;
 </div>
 
 <div class="field">
-<label for="cTo">To</label>
+<label for="cTo">Ke</label>
 <select id="cTo" onchange="convRun()">
 <option value="bin">Binary</option>
 <option value="dec" selected>Decimal</option>
@@ -294,34 +351,33 @@ transition:all .2s ease;
 </select>
 </div>
 
+<button class="small" onclick="convSwap()">&#8645; Tukar</button>
+
 </div>
 
 <div class="field" style="margin-top:14px">
-<label for="cIn" id="cInLabel">Masukkan bilangan hexadecimal</label>
-<input id="cIn" type="text" oninput="convRun()" placeholder="5622">
+<label for="cIn" id="cInLabel">Bilangan hexadecimal</label>
+<input id="cIn" type="text" oninput="convRun()" placeholder="5622" autocomplete="off">
 </div>
-
-<button onclick="convSwap()">Swap</button>
-<button onclick="convReset()">Reset</button>
-
-<label class="chk"><input type="checkbox" id="cGroup" onchange="convRun()"> Digit grouping</label>
 
 <div class="outlabel" id="cOutLabel">Hasil</div>
 
 <div id="cOut" class="hexout"></div>
 
-<table id="convOut">
-
-<tr>
-<th>Konversi</th>
-<th>Hasil</th>
-</tr>
-
-</table>
-
+<div class="convbtns">
+<button class="small" onclick="convCopy()" id="cCopy">Salin hasil</button>
+<button class="small" onclick="convReset()">Bersihkan</button>
+<label class="chk"><input type="checkbox" id="cGroup" onchange="convRun()"> Pisahkan digit</label>
 </div>
 
-<footer>Protocol of 4G CAT1 Single Lamp Controller &mdash; </footer>
+<div id="cCards" class="cards"></div>
+
+<details id="cMore">
+<summary>Detail lain &mdash; signed, skala protokol, langkah hitung</summary>
+<div id="cExtra" class="cards"></div>
+</details>
+
+</div>
 
 <script>
 
@@ -1461,29 +1517,27 @@ return s.replace(/\B(?=(\d{3})+(?!\d))/g,",");
 
 }
 
-function convRow(name,val,cls=""){
+function convCard(label,value,wide){
 
-let r=document.getElementById("convOut").insertRow();
-
-r.style.animation="fadeIn .25s ease";
-
-r.insertCell(0).innerText=name;
-
-let v=r.insertCell(1);
-v.innerText=val;
-
-if(cls)v.className=cls;
+return '<div class="card'+(wide?' wide':'')+'"><span>'+label+'</span><b>'+value+'</b></div>';
 
 }
 
-function convClear(){
+function convCopy(){
 
-document.getElementById("convOut").innerHTML=`
+let t=document.getElementById("cOut").innerText;
 
-<tr>
-<th>Konversi</th>
-<th>Hasil</th>
-</tr>`;
+if(!t)return;
+
+navigator.clipboard.writeText(t).then(()=>{
+
+let b=document.getElementById("cCopy");
+
+b.innerText="Tersalin";
+
+setTimeout(()=>{b.innerText="Salin hasil";},1200);
+
+},()=>{});
 
 }
 
@@ -1499,7 +1553,7 @@ let a=f.value;
 f.value=t.value;
 t.value=a;
 
-/* isi kotak input dengan hasil sebelumnya, supaya benar-benar tertukar */
+/* hasil sebelumnya jadi input, supaya benar-benar tertukar */
 
 document.getElementById("cIn").value=convFormat(f.value,hex,false);
 
@@ -1521,73 +1575,91 @@ let from=document.getElementById("cFrom").value;
 let to=document.getElementById("cTo").value;
 let group=document.getElementById("cGroup").checked;
 
-document.getElementById("cInLabel").innerText="Masukkan bilangan "+BASE_NAME[from];
+document.getElementById("cInLabel").innerText="Bilangan "+BASE_NAME[from];
 document.getElementById("cOutLabel").innerText="Hasil dalam "+BASE_NAME[to];
 
-let raw=document.getElementById("cIn").value;
+let hex=convToHex(from,document.getElementById("cIn").value);
 
-let hex=convToHex(from,raw);
-
-convClear();
+let out=document.getElementById("cOut");
+let cards=document.getElementById("cCards");
+let extra=document.getElementById("cExtra");
 
 if(!hex){
-document.getElementById("cOut").innerText="";
+
+out.innerText="";
+cards.innerHTML="";
+extra.innerHTML="";
+document.getElementById("cMore").style.display="none";
 return;
+
 }
 
-let main=convFormat(to,hex,group);
-
-if(to==="dec"&&group)main=convGroupDec(BigInt("0x"+hex).toString(10));
-
-document.getElementById("cOut").innerText=main;
-
-/* semua bentuk lain, sekaligus */
+document.getElementById("cMore").style.display="block";
 
 let v=BigInt("0x"+hex);
 let bytes=hex.length/2;
 
-convRow("Hexadecimal","0x"+convGroup(hex.toUpperCase(),2));
-convRow("Decimal",group?convGroupDec(v.toString(10)):v.toString(10));
-convRow("Octal",v.toString(8));
-convRow("Binary",convGroup(v.toString(2).padStart(bytes*8,'0'),8));
+/* hasil utama */
+
+let main=convFormat(to,hex,group);
+
+if(to==="dec"&&group)main=convGroupDec(v.toString(10));
+
+out.innerText=main;
+
+/* kartu : hanya basis lain, yang sedang ditampilkan besar tidak diulang */
+
+let all=[];
+
+if(to!=="hex")
+all.push(convCard("Hexadecimal","0x"+(group?convGroup(hex.toUpperCase(),2):hex.toUpperCase())));
+
+if(to!=="dec")
+all.push(convCard("Decimal",group?convGroupDec(v.toString(10)):v.toString(10)));
+
+if(to!=="oct")
+all.push(convCard("Octal",v.toString(8)));
+
+if(to!=="bin")
+all.push(convCard("Binary",convGroup(v.toString(2).padStart(bytes*8,'0'),8)));
 
 let txt=convAscii(hex);
 
-if(txt!==null&&bytes>1)convRow("Text (ASCII)",txt);
+if(txt!==null&&bytes>1&&to!=="text")
+all.push(convCard("Text (ASCII)",txt));
 
-convRow("Panjang",bytes+" byte ("+bytes*8+" bit)");
+all.push(convCard("Panjang",bytes+" byte"));
 
-/* signed 2's complement */
+cards.innerHTML=all.join("");
+
+/* detail : hanya yang benar-benar memberi informasi tambahan */
+
+let more=[];
 
 let bits=BigInt(bytes*8);
-
 let signed=v;
 
 if((v>>(bits-1n))&1n)signed=v-(1n<<bits);
 
-convRow("Signed 2's complement",signed.toString(10),signed<0n?"info":"");
-
-/* skala yang dipakai protokol ICODE */
+if(signed!==v)
+more.push(convCard("Signed 2's complement",signed.toString(10)));
 
 let n=Number(v);
 
 if(Number.isSafeInteger(n)){
 
-convRow("/ 10",(n/10)+"   (W, VAR)");
-convRow("/ 100",(n/100)+"   (V, Hz, kWh, VA)");
-convRow("/ 1000",(n/1000)+"   (A)");
-convRow("Suhu (nilai - 10000) / 100",((n-10000)/100)+" \u00B0C");
+more.push(convCard("&divide; 10 &nbsp; W, VAR",n/10));
+more.push(convCard("&divide; 100 &nbsp; V, Hz, kWh, VA",n/100));
+more.push(convCard("&divide; 1000 &nbsp; A",n/1000));
+more.push(convCard("Suhu (nilai - 10000) / 100",((n-10000)/100)+" \u00B0C"));
 
 }
-
-/* langkah perhitungan, seperti rapidtables */
 
 if(to==="dec"&&from!=="text"&&from!=="dec"){
 
 let radix=from==="hex"?16:from==="oct"?8:2;
 
-let digits=from==="hex"?hex.toUpperCase().replace(/^0+(?=.)/,'')
-:v.toString(radix);
+let digits=from==="hex"?hex.toUpperCase().replace(/^0+(?=.)/,''):v.toString(radix);
 
 if(digits.length<=10){
 
@@ -1595,17 +1667,17 @@ let parts=[];
 let power=digits.length-1;
 
 for(let d of digits){
-
 parts.push(d+" \u00D7 "+radix+"^"+power);
 power--;
+}
+
+more.push(convCard("Langkah hitung",parts.join("  +  ")+"  =  "+v.toString(10),true));
 
 }
 
-convRow("Langkah",parts.join("  +  ")+"  =  "+v.toString(10));
-
 }
 
-}
+extra.innerHTML=more.join("");
 
 }
 
