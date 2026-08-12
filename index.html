@@ -251,49 +251,267 @@ text-align:center;
 color:#6fffd2;
 }
 
-/* ANIMATION */
+/* ============================================================
+   ANIMASI
+   ============================================================ */
 
 @keyframes fadeIn{
-from{
-opacity:0;
-transform:translateY(8px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:none;}
 }
 
-@keyframes glow{
-0%{box-shadow:0 0 5px #00ffa6;}
-50%{box-shadow:0 0 15px #00ffa6;}
-100%{box-shadow:0 0 5px #00ffa6;}
+@keyframes panelIn{
+from{opacity:0;transform:translateY(16px) scale(.995);}
+to{opacity:1;transform:none;}
 }
 
-/* table animation */
-
-#result tr{
-animation:fadeIn .50s ease forwards;
+@keyframes popIn{
+from{opacity:0;transform:translateY(10px) scale(.96);}
+to{opacity:1;transform:none;}
 }
 
-/* textarea focus */
-
-textarea:focus{
-box-shadow:0 0 10px rgba(0,255,170,0.5);
+@keyframes dropIn{
+from{opacity:0;transform:translateY(-14px);}
+to{opacity:1;transform:none;}
 }
 
-/* button animation */
+@keyframes shimmer{
+to{background-position:200% center;}
+}
+
+@keyframes bgShift{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+@keyframes flash{
+0%{box-shadow:0 0 0 rgba(0,255,166,0);}
+30%{box-shadow:0 0 26px rgba(0,255,166,.45);border-color:#00ffa6;}
+100%{box-shadow:0 0 0 rgba(0,255,166,0);}
+}
+
+@keyframes breathe{
+0%,100%{box-shadow:0 0 0 rgba(0,255,166,0);}
+50%{box-shadow:0 0 24px rgba(0,255,166,.45);}
+}
+
+@keyframes blink{
+0%,100%{opacity:1;transform:scale(1);}
+50%{opacity:.25;transform:scale(.8);}
+}
+
+/* latar bergerak pelan */
+
+body{
+background-size:300% 300%;
+animation:bgShift 26s ease-in-out infinite;
+}
+
+/* judul berkilau */
+
+h2{
+background:linear-gradient(90deg,#9fffd8,#00c3ff,#00ffa6,#9fffd8);
+background-size:200% auto;
+-webkit-background-clip:text;
+background-clip:text;
+color:transparent;
+animation:dropIn .5s ease both,shimmer 7s linear infinite;
+}
+
+/* tab */
+
+.tabs{
+animation:dropIn .5s .05s ease both;
+}
+
+button.tab{
+transition:transform .2s ease,box-shadow .25s ease,border-color .25s ease,color .25s ease;
+}
+
+button.tab:hover{
+transform:translateY(-2px);
+border-color:#00ffa6;
+box-shadow:0 0 14px rgba(0,255,166,.25);
+}
+
+button.tab.active{
+box-shadow:0 6px 20px rgba(0,195,255,.28);
+}
+
+/* panel */
+
+#tab-decode,#tab-conv,#tab-time{
+animation:panelIn .38s ease both;
+}
+
+/* tombol */
+
+button{
+background-size:180% auto;
+transition:transform .18s ease,box-shadow .25s ease,background-position .4s ease,filter .2s ease;
+}
 
 button:hover{
-animation:glow 1s infinite;
-transform:translateY(-1px);
+transform:translateY(-2px);
+background-position:right center;
+box-shadow:0 8px 22px rgba(0,255,166,.3);
 }
 
-/* row hover smooth */
+button:active{
+transform:translateY(0) scale(.96);
+box-shadow:0 2px 8px rgba(0,255,166,.25);
+}
+
+/* baris tabel, muncul berurutan */
+
+#result tr,#result tr td{
+animation-fill-mode:both;
+}
+
+#result tr{
+animation:fadeIn .4s ease both;
+}
+
+#result tr:nth-child(1){animation-delay:0.000s;}
+#result tr:nth-child(2){animation-delay:0.030s;}
+#result tr:nth-child(3){animation-delay:0.060s;}
+#result tr:nth-child(4){animation-delay:0.090s;}
+#result tr:nth-child(5){animation-delay:0.120s;}
+#result tr:nth-child(6){animation-delay:0.150s;}
+#result tr:nth-child(7){animation-delay:0.180s;}
+#result tr:nth-child(8){animation-delay:0.210s;}
+#result tr:nth-child(9){animation-delay:0.240s;}
+#result tr:nth-child(10){animation-delay:0.270s;}
+#result tr:nth-child(11){animation-delay:0.300s;}
+#result tr:nth-child(12){animation-delay:0.330s;}
+#result tr:nth-child(13){animation-delay:0.360s;}
+#result tr:nth-child(14){animation-delay:0.390s;}
+#result tr:nth-child(15){animation-delay:0.420s;}
+#result tr:nth-child(16){animation-delay:0.450s;}
+#result tr:nth-child(17){animation-delay:0.480s;}
+#result tr:nth-child(18){animation-delay:0.510s;}
+#result tr:nth-child(19){animation-delay:0.540s;}
+#result tr:nth-child(20){animation-delay:0.570s;}
+#result tr:nth-child(21){animation-delay:0.600s;}
+#result tr:nth-child(22){animation-delay:0.630s;}
+#result tr:nth-child(23){animation-delay:0.660s;}
+#result tr:nth-child(24){animation-delay:0.690s;}
+#result tr:nth-child(25){animation-delay:0.720s;}
+#result tr:nth-child(26){animation-delay:0.750s;}
+#result tr:nth-child(27){animation-delay:0.780s;}
+#result tr:nth-child(28){animation-delay:0.810s;}
+#result tr:nth-child(29){animation-delay:0.840s;}
+#result tr:nth-child(30){animation-delay:0.870s;}
+#result tr:nth-child(31){animation-delay:0.900s;}
+#result tr:nth-child(32){animation-delay:0.930s;}
+#result tr:nth-child(33){animation-delay:0.960s;}
+#result tr:nth-child(34){animation-delay:0.990s;}
+#result tr:nth-child(35){animation-delay:1.020s;}
+#result tr:nth-child(36){animation-delay:1.050s;}
+#result tr:nth-child(37){animation-delay:1.080s;}
+#result tr:nth-child(38){animation-delay:1.110s;}
+#result tr:nth-child(39){animation-delay:1.140s;}
+#result tr:nth-child(40){animation-delay:1.170s;}
 
 tr{
-transition:all .2s ease;
+transition:background .2s ease,transform .2s ease;
 }
+
+#result tr:hover{
+transform:translateX(3px);
+}
+
+/* kartu, muncul berurutan */
+
+.card{
+animation:popIn .35s ease both;
+transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+
+.cards .card:nth-child(1){animation-delay:0.000s;}
+.cards .card:nth-child(2){animation-delay:0.045s;}
+.cards .card:nth-child(3){animation-delay:0.090s;}
+.cards .card:nth-child(4){animation-delay:0.135s;}
+.cards .card:nth-child(5){animation-delay:0.180s;}
+.cards .card:nth-child(6){animation-delay:0.225s;}
+.cards .card:nth-child(7){animation-delay:0.270s;}
+.cards .card:nth-child(8){animation-delay:0.315s;}
+.cards .card:nth-child(9){animation-delay:0.360s;}
+.cards .card:nth-child(10){animation-delay:0.405s;}
+.cards .card:nth-child(11){animation-delay:0.450s;}
+.cards .card:nth-child(12){animation-delay:0.495s;}
+
+.card:hover{
+transform:translateY(-3px);
+border-color:#2b4c46;
+box-shadow:0 10px 22px rgba(0,0,0,.4);
+}
+
+/* kotak masukan & hasil */
+
+textarea,.field input,select{
+transition:box-shadow .25s ease,border-color .25s ease,transform .2s ease;
+}
+
+textarea:focus,.field input:focus,select:focus{
+box-shadow:0 0 14px rgba(0,255,170,.45);
+border-color:#00ffa6;
+}
+
+textarea.drag{
+animation:breathe 1.2s ease infinite;
+transform:scale(1.005);
+}
+
+.hexout{
+transition:box-shadow .3s ease,border-color .3s ease;
+}
+
+.hexout.flash{
+animation:flash .8s ease;
+}
+
+/* kartu jam dibangun ulang tiap detik, jangan dianimasikan
+   supaya tidak berkedip terus */
+
+#tNowCards .card{
+animation:none;
+}
+
+/* titik jam berdetak */
+
+.dot{
+display:inline-block;
+width:7px;
+height:7px;
+border-radius:50%;
+background:#00ffa6;
+margin-left:8px;
+box-shadow:0 0 8px #00ffa6;
+animation:blink 1s steps(1,end) infinite;
+}
+
+/* buka tutup detail */
+
+details[open] .cards{
+animation:panelIn .3s ease both;
+}
+
+summary{
+transition:color .2s ease;
+}
+
+summary:hover{
+color:#00ffa6;
+}
+
+/* hormati pengaturan hemat animasi */
+
+@media (prefers-reduced-motion:reduce){
+*{animation:none !important;transition:none !important;}
+}
+
 </style>
 
 </head>
@@ -384,7 +602,7 @@ transition:all .2s ease;
 
 <div id="tab-time" style="display:none">
 
-<div class="outlabel">Waktu sekarang dalam milidetik</div>
+<div class="outlabel">Waktu sekarang dalam milidetik <span class="dot"></span></div>
 
 <div id="tNow" class="hexout"></div>
 
@@ -1641,7 +1859,12 @@ let main=convFormat(to,hex,group);
 
 if(to==="dec"&&group)main=convGroupDec(v.toString(10));
 
+if(out.innerText!==main){
+
 out.innerText=main;
+flashEl(out);
+
+}
 
 /* kartu : hanya basis lain, yang sedang ditampilkan besar tidak diulang */
 
@@ -1888,6 +2111,20 @@ setInterval(timeTick,1000);
 
 }
 
+/* kedipkan elemen saat isinya berubah */
+
+function flashEl(el){
+
+if(!el||!el.classList)return;
+
+el.classList.remove("flash");
+
+void el.offsetWidth;
+
+el.classList.add("flash");
+
+}
+
 function showTab(t){
 
 document.getElementById("tab-decode").style.display=(t==="decode")?"block":"none";
@@ -1897,6 +2134,20 @@ document.getElementById("tab-time").style.display=(t==="time")?"block":"none";
 document.getElementById("btn-decode").className=(t==="decode")?"tab active":"tab";
 document.getElementById("btn-conv").className=(t==="conv")?"tab active":"tab";
 document.getElementById("btn-time").className=(t==="time")?"tab active":"tab";
+
+/* jalankan ulang animasi panel yang baru tampil */
+
+let panel=document.getElementById("tab-"+t);
+
+if(panel&&panel.style){
+
+panel.style.animation="none";
+
+void panel.offsetWidth;
+
+panel.style.animation="panelIn .38s ease both";
+
+}
 
 }
 
