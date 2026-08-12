@@ -6,6 +6,8 @@
 
 <title>ICODE Universal Decoder</title>
 
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2234%22%20r%3D%2223%22%20fill%3D%22none%22%20stroke%3D%22%23c9d2cf%22%20stroke-width%3D%229%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2234%22%20r%3D%2223%22%20fill%3D%22none%22%20stroke%3D%22%231d5b38%22%20stroke-width%3D%226%22%2F%3E%3Cpath%20d%3D%22M58%204C34%208%2016%2024%2012%2056c26-6%2042-24%2046-52z%22%20fill%3D%22%23c9d2cf%22%2F%3E%3Cpath%20d%3D%22M58%204C36%2012%2022%2028%2014%2050%22%20fill%3D%22none%22%20stroke%3D%22%23ef7c1a%22%20stroke-width%3D%229%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M58%204C30%2020%2018%2038%2012%2056%22%20fill%3D%22none%22%20stroke%3D%22%231d5b38%22%20stroke-width%3D%227%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -303,6 +305,7 @@ transition:all .2s ease;
 <div class="tabs">
 <button id="btn-decode" class="tab active" onclick="showTab('decode')">Decode Frame</button>
 <button id="btn-conv" class="tab" onclick="showTab('conv')">Konverter Bilangan</button>
+<button id="btn-time" class="tab" onclick="showTab('time')">Waktu &amp; Epoch</button>
 </div>
 
 <div id="tab-decode">
@@ -376,6 +379,39 @@ transition:all .2s ease;
 <summary>Detail lain &mdash; signed, skala protokol, langkah hitung</summary>
 <div id="cExtra" class="cards"></div>
 </details>
+
+</div>
+
+<div id="tab-time" style="display:none">
+
+<div class="outlabel">Waktu sekarang dalam milidetik</div>
+
+<div id="tNow" class="hexout"></div>
+
+<div class="convbtns">
+<button class="small" id="tCopy" onclick="timeCopy()">Salin</button>
+<button class="small" onclick="timeUseNow()">Pakai untuk konversi</button>
+</div>
+
+<div id="tNowCards" class="cards"></div>
+
+<div class="outlabel">Epoch &rarr; tanggal</div>
+
+<div class="field">
+<label for="tIn">Milidetik atau detik</label>
+<input id="tIn" type="text" oninput="timeRun()" placeholder="1755012345678" autocomplete="off">
+</div>
+
+<div id="tCards" class="cards"></div>
+
+<div class="outlabel">Tanggal &rarr; epoch</div>
+
+<div class="field">
+<label for="tDate">Waktu lokal</label>
+<input id="tDate" type="datetime-local" step="1" oninput="dateRun()">
+</div>
+
+<div id="dCards" class="cards"></div>
 
 </div>
 
@@ -1681,19 +1717,193 @@ extra.innerHTML=more.join("");
 
 }
 
+/* ============================================================
+   WAKTU & EPOCH
+   ============================================================ */
+
+const WIB={timeZone:"Asia/Jakarta",hour12:false};
+const UTCZ={timeZone:"UTC",hour12:false};
+
+function timeFormat(d,opt){
+
+return d.toLocaleString("id-ID",Object.assign({
+year:"numeric",month:"2-digit",day:"2-digit",
+hour:"2-digit",minute:"2-digit",second:"2-digit"},opt));
+
+}
+
+function timeRelative(ms){
+
+let d=Date.now()-ms;
+
+let past=d>=0;
+
+d=Math.abs(d);
+
+let s=Math.round(d/1000);
+let txt;
+
+if(s<60)txt=s+" detik";
+else if(s<3600)txt=Math.round(s/60)+" menit";
+else if(s<86400)txt=Math.round(s/3600)+" jam";
+else txt=Math.round(s/86400)+" hari";
+
+return past?txt+" lalu":"dalam "+txt;
+
+}
+
+/* waktu dalam frame ICODE : Time = SS MM HH, Date = DD MM YY, UTC+0 */
+
+function timeIcodeHex(d){
+
+let p=n=>n.toString(16).padStart(2,'0').toUpperCase();
+
+let t=p(d.getUTCSeconds())+" "+p(d.getUTCMinutes())+" "+p(d.getUTCHours());
+let g=p(d.getUTCDate())+" "+p(d.getUTCMonth()+1)+" "+p(d.getUTCFullYear()%100);
+
+return [t,g];
+
+}
+
+function timeCards(ms){
+
+let d=new Date(ms);
+
+if(isNaN(d.getTime()))return '<div class="card wide"><span>Tidak valid</span><b>Nilai di luar jangkauan tanggal</b></div>';
+
+let icode=timeIcodeHex(d);
+
+return [
+convCard("Waktu lokal (WIB)",timeFormat(d,WIB)),
+convCard("UTC",timeFormat(d,UTCZ)),
+convCard("ISO 8601",d.toISOString()),
+convCard("Detik (epoch)",Math.floor(ms/1000)),
+convCard("Milidetik",ms),
+convCard("Selisih dari sekarang",timeRelative(ms)),
+convCard("Frame ICODE &mdash; Time (SS MM HH)","0x"+icode[0]),
+convCard("Frame ICODE &mdash; Date (DD MM YY)","0x"+icode[1])
+].join("");
+
+}
+
+function timeTick(){
+
+let ms=Date.now();
+
+let el=document.getElementById("tNow");
+
+if(!el)return;
+
+el.innerText=ms;
+
+document.getElementById("tNowCards").innerHTML=[
+convCard("Detik (epoch)",Math.floor(ms/1000)),
+convCard("Waktu lokal (WIB)",timeFormat(new Date(ms),WIB)),
+convCard("UTC",timeFormat(new Date(ms),UTCZ)),
+convCard("ISO 8601",new Date(ms).toISOString())
+].join("");
+
+}
+
+function timeCopy(){
+
+navigator.clipboard.writeText(document.getElementById("tNow").innerText).then(()=>{
+
+let b=document.getElementById("tCopy");
+
+b.innerText="Tersalin";
+
+setTimeout(()=>{b.innerText="Salin";},1200);
+
+},()=>{});
+
+}
+
+function timeUseNow(){
+
+document.getElementById("tIn").value=String(Date.now());
+
+timeRun();
+
+}
+
+function timeRun(){
+
+let raw=document.getElementById("tIn").value.replace(/[^0-9]/g,'');
+
+let out=document.getElementById("tCards");
+
+if(!raw){
+out.innerHTML="";
+return;
+}
+
+let n=Number(raw);
+
+/* 10 digit atau kurang = detik, selebihnya milidetik */
+
+let asSeconds=raw.length<=10;
+
+let ms=asSeconds?n*1000:n;
+
+out.innerHTML=convCard("Dibaca sebagai",asSeconds?"detik (epoch)":"milidetik")+timeCards(ms);
+
+}
+
+function dateRun(){
+
+let v=document.getElementById("tDate").value;
+
+let out=document.getElementById("dCards");
+
+if(!v){
+out.innerHTML="";
+return;
+}
+
+let ms=new Date(v).getTime();
+
+if(isNaN(ms)){
+out.innerHTML="";
+return;
+}
+
+out.innerHTML=timeCards(ms);
+
+}
+
+function timeInit(){
+
+let d=new Date();
+
+d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+
+document.getElementById("tDate").value=d.toISOString().slice(0,19);
+
+timeTick();
+
+dateRun();
+
+setInterval(timeTick,1000);
+
+}
+
 function showTab(t){
 
 document.getElementById("tab-decode").style.display=(t==="decode")?"block":"none";
 document.getElementById("tab-conv").style.display=(t==="conv")?"block":"none";
+document.getElementById("tab-time").style.display=(t==="time")?"block":"none";
 
 document.getElementById("btn-decode").className=(t==="decode")?"tab active":"tab";
 document.getElementById("btn-conv").className=(t==="conv")?"tab active":"tab";
+document.getElementById("btn-time").className=(t==="time")?"tab active":"tab";
 
 }
 
 /* UX FEATURES */
 
 convRun();
+timeInit();
 
 const hexBox=document.getElementById("hexInput");
 
