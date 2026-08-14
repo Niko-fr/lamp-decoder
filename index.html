@@ -607,11 +607,201 @@ animation:panelIn .3s ease both;
 *{animation:none !important;transition:none !important;}
 }
 
+
+/* ============================================================
+   HIASAN 3D DI LATAR
+   ============================================================ */
+
+.scene{
+position:fixed;
+inset:0;
+z-index:-1;
+overflow:hidden;
+pointer-events:none;
+}
+
+body::before,body::after{
+z-index:-2;
+}
+
+.deco{
+position:absolute;
+filter:drop-shadow(0 20px 26px rgba(86,66,160,.28));
+}
+
+.deco-island{
+left:-34px;
+bottom:-24px;
+width:300px;
+animation:floatY 11s ease-in-out infinite;
+}
+
+.deco-balloon{
+right:7%;
+top:11%;
+width:112px;
+animation:floatY 8s ease-in-out infinite reverse;
+}
+
+.deco-cloud1{
+left:6%;
+top:7%;
+width:200px;
+opacity:.8;
+animation:driftX 26s ease-in-out infinite;
+}
+
+.deco-cloud2{
+right:-30px;
+bottom:16%;
+width:240px;
+opacity:.72;
+animation:driftX 34s ease-in-out infinite reverse;
+}
+
+.deco-ball1{
+right:16%;
+bottom:6%;
+width:74px;
+animation:floatY 9s ease-in-out infinite;
+}
+
+.deco-ball2{
+left:9%;
+top:52%;
+width:52px;
+animation:floatY 13s ease-in-out infinite reverse;
+}
+
+.deco-ball3{
+right:5%;
+top:44%;
+width:40px;
+animation:floatY 7s ease-in-out infinite;
+}
+
+@keyframes floatY{
+0%,100%{transform:translateY(0) rotate(0deg);}
+50%{transform:translateY(-26px) rotate(2deg);}
+}
+
+@keyframes driftX{
+0%,100%{transform:translateX(0);}
+50%{transform:translateX(46px);}
+}
+
+/* layar sempit : hiasan disembunyikan supaya tidak menutupi isi */
+
+@media (max-width:1200px){
+.scene{display:none;}
+}
+
 </style>
 
 </head>
 
 <body>
+
+<div class="scene" aria-hidden="true">
+
+<!-- pulau melayang berpohon -->
+<svg class="deco deco-island" viewBox="0 0 240 210">
+<defs>
+<linearGradient id="dcRock" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#b9a8fb"/><stop offset="1" stop-color="#6d4aff"/>
+</linearGradient>
+<linearGradient id="dcGrass" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#a8f5cd"/><stop offset="1" stop-color="#3fc78c"/>
+</linearGradient>
+<linearGradient id="dcLeaf" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#8ef0bd"/><stop offset="1" stop-color="#26a170"/>
+</linearGradient>
+</defs>
+<path d="M40 96 L120 196 L200 96 Z" fill="url(#dcRock)"/>
+<path d="M120 196 L200 96 L165 92 Z" fill="#5836e0" opacity=".35"/>
+<ellipse cx="120" cy="96" rx="80" ry="26" fill="url(#dcGrass)"/>
+<ellipse cx="104" cy="90" rx="42" ry="12" fill="#c9ffe6" opacity=".45"/>
+<g>
+<rect x="86" y="58" width="7" height="26" rx="3.5" fill="#b07d55"/>
+<ellipse cx="89" cy="52" rx="22" ry="17" fill="url(#dcLeaf)"/>
+<ellipse cx="82" cy="46" rx="12" ry="8" fill="#d6ffe9" opacity=".5"/>
+</g>
+<g>
+<rect x="138" y="66" width="6" height="22" rx="3" fill="#b07d55"/>
+<ellipse cx="141" cy="60" rx="17" ry="13" fill="url(#dcLeaf)"/>
+<ellipse cx="136" cy="56" rx="9" ry="6" fill="#d6ffe9" opacity=".5"/>
+</g>
+<circle cx="60" cy="120" r="7" fill="#ffffff" opacity=".55"/>
+<circle cx="186" cy="140" r="5" fill="#ffffff" opacity=".45"/>
+</svg>
+
+<!-- balon udara -->
+<svg class="deco deco-balloon" viewBox="0 0 120 165">
+<defs>
+<radialGradient id="dcBal" cx=".34" cy=".28" r=".85">
+<stop offset="0" stop-color="#ffe3f4"/><stop offset="1" stop-color="#ef77b4"/>
+</radialGradient>
+</defs>
+<path d="M60 6c27 0 47 21 47 47 0 27-27 46-47 69-20-23-47-42-47-69C13 27 33 6 60 6z" fill="url(#dcBal)"/>
+<path d="M60 6c11 0 20 21 20 47 0 27-11 46-20 69" fill="#ffffff" opacity=".28"/>
+<path d="M50 121l8-12M70 121l-8-12" stroke="#c98f5a" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="48" y="120" width="24" height="18" rx="6" fill="#d59b63"/>
+<rect x="48" y="126" width="24" height="4" fill="#b8804c" opacity=".6"/>
+</svg>
+
+<!-- awan -->
+<svg class="deco deco-cloud1" viewBox="0 0 200 96">
+<defs>
+<linearGradient id="dcCloud" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9e9ff"/>
+</linearGradient>
+</defs>
+<g fill="url(#dcCloud)">
+<circle cx="62" cy="54" r="28"/>
+<circle cx="102" cy="40" r="36"/>
+<circle cx="144" cy="56" r="26"/>
+<rect x="58" y="54" width="90" height="28" rx="14"/>
+</g>
+</svg>
+
+<svg class="deco deco-cloud2" viewBox="0 0 200 96">
+<g fill="url(#dcCloud)">
+<circle cx="62" cy="54" r="28"/>
+<circle cx="102" cy="40" r="36"/>
+<circle cx="144" cy="56" r="26"/>
+<rect x="58" y="54" width="90" height="28" rx="14"/>
+</g>
+</svg>
+
+<!-- bola-bola mengambang -->
+<svg class="deco deco-ball1" viewBox="0 0 100 100">
+<defs>
+<radialGradient id="dcBall1" cx=".33" cy=".28" r=".8">
+<stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#7cc4f8"/>
+</radialGradient>
+</defs>
+<circle cx="50" cy="50" r="44" fill="url(#dcBall1)"/>
+</svg>
+
+<svg class="deco deco-ball2" viewBox="0 0 100 100">
+<defs>
+<radialGradient id="dcBall2" cx=".33" cy=".28" r=".8">
+<stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#8ee7c4"/>
+</radialGradient>
+</defs>
+<circle cx="50" cy="50" r="44" fill="url(#dcBall2)"/>
+</svg>
+
+<svg class="deco deco-ball3" viewBox="0 0 100 100">
+<defs>
+<radialGradient id="dcBall3" cx=".33" cy=".28" r=".8">
+<stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c3aefb"/>
+</radialGradient>
+</defs>
+<circle cx="50" cy="50" r="44" fill="url(#dcBall3)"/>
+</svg>
+
+</div>
 
 <h2>ICODE Universal Converter</h2>
 
