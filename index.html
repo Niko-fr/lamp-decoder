@@ -4,7 +4,7 @@
 
 <meta charset="UTF-8">
 
-<title>ICODE Universal Converter</title>
+<title>ICODE Universal Decoder</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2234%22%20r%3D%2223%22%20fill%3D%22none%22%20stroke%3D%22%23c9d2cf%22%20stroke-width%3D%229%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2234%22%20r%3D%2223%22%20fill%3D%22none%22%20stroke%3D%22%231d5b38%22%20stroke-width%3D%226%22%2F%3E%3Cpath%20d%3D%22M58%204C34%208%2016%2024%2012%2056c26-6%2042-24%2046-52z%22%20fill%3D%22%23c9d2cf%22%2F%3E%3Cpath%20d%3D%22M58%204C36%2012%2022%2028%2014%2050%22%20fill%3D%22none%22%20stroke%3D%22%23ef7c1a%22%20stroke-width%3D%229%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M58%204C30%2020%2018%2038%2012%2056%22%20fill%3D%22none%22%20stroke%3D%22%231d5b38%22%20stroke-width%3D%227%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 
@@ -512,13 +512,219 @@ color:#00ffa6;
 *{animation:none !important;transition:none !important;}
 }
 
+
+/* ============================================================
+   TAMPILAN 3D
+   permukaan timbul, tombol yang bisa ditekan, kartu miring
+   ============================================================ */
+
+body{
+perspective:1600px;
+}
+
+/* cahaya latar di belakang semua isi */
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+z-index:-1;
+pointer-events:none;
+background:
+radial-gradient(1100px 560px at 50% -12%,rgba(0,255,180,.12),transparent 62%),
+radial-gradient(900px 520px at 108% 108%,rgba(0,150,255,.12),transparent 60%),
+radial-gradient(700px 420px at -8% 90%,rgba(0,255,166,.07),transparent 60%);
+}
+
+/* judul terangkat */
+
+h2{
+font-size:26px;
+letter-spacing:2px;
+filter:drop-shadow(0 10px 26px rgba(0,255,180,.28));
+}
+
+/* panel utama sebagai lempeng kaca */
+
+#tab-decode,#tab-conv,#tab-time{
+background:linear-gradient(158deg,rgba(20,36,42,.72),rgba(9,16,20,.78));
+border:1px solid rgba(130,255,214,.10);
+border-radius:20px;
+padding:24px;
+margin-top:14px;
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+box-shadow:
+0 30px 60px rgba(0,0,0,.5),
+0 10px 20px rgba(0,0,0,.35),
+inset 0 1px 0 rgba(255,255,255,.07),
+inset 0 -30px 60px rgba(0,0,0,.28);
+}
+
+/* tab : tombol timbul dengan tepi bawah tebal */
+
+.tabs{
+perspective:900px;
+}
+
+button.tab{
+border-radius:13px;
+border:1px solid rgba(130,255,214,.14);
+box-shadow:
+0 6px 0 rgba(0,0,0,.42),
+0 14px 24px rgba(0,0,0,.4),
+inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+button.tab:hover{
+transform:translateY(-3px) rotateX(6deg);
+box-shadow:
+0 9px 0 rgba(0,0,0,.42),
+0 20px 30px rgba(0,0,0,.45),
+inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+button.tab.active{
+border-color:transparent;
+box-shadow:
+0 6px 0 rgba(0,110,96,.85),
+0 16px 30px rgba(0,195,255,.3),
+inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+button.tab:active{
+transform:translateY(3px);
+box-shadow:
+0 2px 0 rgba(0,0,0,.42),
+0 6px 12px rgba(0,0,0,.4);
+}
+
+/* tombol aksi : benar-benar tertekan saat diklik */
+
+button{
+border-radius:12px;
+box-shadow:
+0 6px 0 rgba(0,96,84,.9),
+0 14px 24px rgba(0,0,0,.42),
+inset 0 1px 0 rgba(255,255,255,.5);
+text-shadow:0 1px 0 rgba(255,255,255,.25);
+}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:
+0 8px 0 rgba(0,96,84,.9),
+0 20px 30px rgba(0,255,166,.22),
+inset 0 1px 0 rgba(255,255,255,.55);
+}
+
+button:active{
+transform:translateY(4px);
+box-shadow:
+0 2px 0 rgba(0,96,84,.9),
+0 5px 10px rgba(0,0,0,.4),
+inset 0 2px 6px rgba(0,0,0,.25);
+}
+
+/* kotak isian terlihat cekung */
+
+textarea,.field input,select{
+background:linear-gradient(180deg,#080d11,#0c141a);
+border-color:rgba(130,255,214,.12);
+box-shadow:
+inset 0 3px 10px rgba(0,0,0,.6),
+inset 0 -1px 0 rgba(255,255,255,.04);
+}
+
+textarea:focus,.field input:focus,select:focus{
+box-shadow:
+inset 0 3px 10px rgba(0,0,0,.6),
+0 0 18px rgba(0,255,170,.35),
+0 8px 22px rgba(0,0,0,.35);
+}
+
+/* tabel sebagai lempeng terangkat */
+
+table{
+border:1px solid rgba(130,255,214,.10);
+border-radius:14px;
+box-shadow:
+0 22px 44px rgba(0,0,0,.48),
+inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+th{
+text-shadow:0 1px 0 rgba(255,255,255,.4);
+box-shadow:0 8px 18px rgba(0,0,0,.35);
+}
+
+#result tr:hover{
+transform:translateX(5px);
+box-shadow:inset 3px 0 0 #00ffa6;
+}
+
+/* kartu dengan kemiringan */
+
+.cards{
+perspective:1000px;
+}
+
+.card{
+background:linear-gradient(158deg,#12202a,#0a1116);
+border:1px solid rgba(130,255,214,.09);
+border-radius:14px;
+transform-style:preserve-3d;
+box-shadow:
+0 12px 24px rgba(0,0,0,.4),
+inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.card:hover{
+transform:translateY(-6px) rotateX(7deg) rotateY(-5deg) scale(1.02);
+border-color:rgba(0,255,166,.28);
+box-shadow:
+0 26px 44px rgba(0,0,0,.55),
+0 0 30px rgba(0,255,166,.14),
+inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+/* kotak hasil besar */
+
+.hexout{
+background:linear-gradient(160deg,#0e1c22,#070d11);
+border:1px solid rgba(0,255,166,.18);
+border-radius:16px;
+box-shadow:
+0 20px 38px rgba(0,0,0,.5),
+inset 0 1px 0 rgba(255,255,255,.07),
+inset 0 -20px 40px rgba(0,0,0,.3);
+text-shadow:0 0 22px rgba(0,255,166,.45);
+}
+
+/* blok detail */
+
+details{
+background:linear-gradient(158deg,rgba(18,32,42,.6),rgba(8,14,18,.6));
+border:1px solid rgba(130,255,214,.09);
+border-radius:14px;
+box-shadow:
+0 14px 28px rgba(0,0,0,.38),
+inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+/* titik jam ikut bercahaya */
+
+.dot{
+box-shadow:0 0 10px #00ffa6,0 0 22px rgba(0,255,166,.5);
+}
+
 </style>
 
 </head>
 
 <body>
 
-<h2>ICODE Universal Converter</h2>
+<h2>ICODE Universal Decoder</h2>
 
 <div class="tabs">
 <button id="btn-decode" class="tab active" onclick="showTab('decode')">Decode Frame</button>
