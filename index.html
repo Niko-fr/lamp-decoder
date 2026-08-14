@@ -609,7 +609,7 @@ animation:panelIn .3s ease both;
 
 
 /* ============================================================
-   HIASAN 3D DI LATAR
+   HIASAN 3D DI LATAR - semuanya bergerak
    ============================================================ */
 
 .scene{
@@ -627,67 +627,121 @@ z-index:-2;
 .deco{
 position:absolute;
 filter:drop-shadow(0 20px 26px rgba(86,66,160,.28));
+will-change:transform;
 }
+
+/* pulau : naik turun sambil bergoyang */
 
 .deco-island{
 left:-34px;
 bottom:-24px;
 width:300px;
-animation:floatY 11s ease-in-out infinite;
+animation:bobRot 10s ease-in-out infinite;
 }
+
+@keyframes bobRot{
+0%,100%{transform:translateY(0) rotate(-2deg);}
+50%{transform:translateY(-26px) rotate(2deg);}
+}
+
+/* balon : terbang menyeberang layar sambil naik */
 
 .deco-balloon{
-right:7%;
-top:11%;
+left:0;
+top:0;
 width:112px;
-animation:floatY 8s ease-in-out infinite reverse;
+animation:balloonFly 46s linear infinite;
 }
 
+@keyframes balloonFly{
+0%{transform:translate(-14vw,88vh) rotate(-6deg);}
+20%{transform:translate(12vw,68vh) rotate(5deg);}
+40%{transform:translate(38vw,46vh) rotate(-5deg);}
+60%{transform:translate(62vw,30vh) rotate(6deg);}
+80%{transform:translate(86vw,12vh) rotate(-4deg);}
+100%{transform:translate(112vw,-22vh) rotate(4deg);}
+}
+
+/* awan : menyeberang terus menerus, arah berlawanan */
+
 .deco-cloud1{
-left:6%;
 top:7%;
+left:0;
 width:200px;
-opacity:.8;
-animation:driftX 26s ease-in-out infinite;
+opacity:.85;
+animation:crossRight 58s linear infinite;
 }
 
 .deco-cloud2{
-right:-30px;
-bottom:16%;
+bottom:18%;
+left:0;
 width:240px;
-opacity:.72;
-animation:driftX 34s ease-in-out infinite reverse;
+opacity:.7;
+animation:crossLeft 76s linear infinite;
 }
+
+@keyframes crossRight{
+from{transform:translateX(-260px);}
+to{transform:translateX(calc(100vw + 60px));}
+}
+
+@keyframes crossLeft{
+from{transform:translateX(calc(100vw + 60px));}
+to{transform:translateX(-300px);}
+}
+
+/* bola : mengorbit pelan */
 
 .deco-ball1{
 right:16%;
-bottom:6%;
+bottom:10%;
 width:74px;
-animation:floatY 9s ease-in-out infinite;
+animation:orbit 17s ease-in-out infinite;
 }
 
 .deco-ball2{
 left:9%;
-top:52%;
+top:50%;
 width:52px;
-animation:floatY 13s ease-in-out infinite reverse;
+animation:orbit 23s ease-in-out infinite reverse;
 }
 
 .deco-ball3{
-right:5%;
-top:44%;
+right:6%;
+top:42%;
 width:40px;
-animation:floatY 7s ease-in-out infinite;
+animation:orbitWide 13s ease-in-out infinite;
 }
 
-@keyframes floatY{
-0%,100%{transform:translateY(0) rotate(0deg);}
-50%{transform:translateY(-26px) rotate(2deg);}
+@keyframes orbit{
+0%,100%{transform:translate(0,0);}
+25%{transform:translate(38px,-30px);}
+50%{transform:translate(0,-62px);}
+75%{transform:translate(-38px,-30px);}
 }
 
-@keyframes driftX{
-0%,100%{transform:translateX(0);}
-50%{transform:translateX(46px);}
+@keyframes orbitWide{
+0%,100%{transform:translate(0,0) rotate(0deg);}
+25%{transform:translate(-52px,-26px) rotate(90deg);}
+50%{transform:translate(-70px,-70px) rotate(180deg);}
+75%{transform:translate(-18px,-46px) rotate(270deg);}
+}
+
+/* pesawat kertas : melintas miring lalu berulang */
+
+.deco-plane{
+left:0;
+top:0;
+width:78px;
+opacity:.9;
+animation:planeFly 26s linear infinite;
+}
+
+@keyframes planeFly{
+0%{transform:translate(-16vw,72vh) rotate(-14deg);}
+45%{transform:translate(46vw,34vh) rotate(-4deg);}
+55%{transform:translate(56vw,32vh) rotate(6deg);}
+100%{transform:translate(118vw,6vh) rotate(-10deg);}
 }
 
 /* layar sempit : hiasan disembunyikan supaya tidak menutupi isi */
@@ -799,6 +853,18 @@ animation:floatY 7s ease-in-out infinite;
 </radialGradient>
 </defs>
 <circle cx="50" cy="50" r="44" fill="url(#dcBall3)"/>
+</svg>
+
+<!-- pesawat kertas -->
+<svg class="deco deco-plane" viewBox="0 0 120 80">
+<defs>
+<linearGradient id="dcPlane" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfe4ff"/>
+</linearGradient>
+</defs>
+<path d="M4 42 L116 6 L72 76 L56 50 Z" fill="url(#dcPlane)"/>
+<path d="M56 50 L116 6 L72 76 Z" fill="#a9c8f0" opacity=".55"/>
+<path d="M4 42 L56 50 L116 6 Z" fill="#ffffff" opacity=".85"/>
 </svg>
 
 </div>
